@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>塔羅牌義查詢與全方位占卜</title>
+    <title>塔羅牌義查詢與全方位占卜 Pro+</title>
     <style>
         :root {
             --primary: #2c3e50;
@@ -11,13 +11,20 @@
             --bg: #dfe6e9;
             --card-bg: #fff;
             --rev-color: #c0392b;
+            --gold: #f1c40f;
+            --placeholder-bg: #e1e5ea;
         }
 
-        body { font-family: "Microsoft JhengHei", sans-serif; background: var(--bg); margin: 0; padding: 20px; color: #333; }
+        body { font-family: "Microsoft JhengHei", sans-serif; background: var(--bg); margin: 0; padding: 20px; color: #333; padding-bottom: 80px; }
         
-        header { text-align: center; margin-bottom: 30px; }
+        header { text-align: center; margin-bottom: 30px; position: relative; }
         h1 { color: var(--primary); margin-bottom: 5px; }
         p { color: #636e72; }
+
+        /* --- 頂部按鈕區 --- */
+        .top-actions { position: absolute; top: 0; right: 0; }
+        .icon-btn { background: none; border: none; font-size: 1.5rem; cursor: pointer; padding: 5px; transition: 0.3s; }
+        .icon-btn:hover { transform: scale(1.1); }
 
         /* --- 模式切換按鈕 --- */
         .mode-selector { display: flex; justify-content: center; gap: 10px; margin-bottom: 25px; flex-wrap: wrap; }
@@ -62,19 +69,57 @@
             background: var(--card-bg); border-radius: 15px; overflow: hidden;
             box-shadow: 0 4px 10px rgba(0,0,0,0.1); transition: transform 0.2s;
             display: flex; flex-direction: column; position: relative;
+            perspective: 1000px;
         }
-        .card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.15); }
         
-        /* --- 圖片置中設定 --- */
-        .img-container {
-            width: 100%; height: 350px; background: #f1f2f6;
-            position: relative; overflow: hidden;
-            display: flex; align-items: center; justify-content: center;
+        /* --- 實體抽牌空白卡槽 --- */
+        .card.empty-slot {
+            height: 400px; border: 3px dashed #b2bec3; background: #f1f2f6;
+            align-items: center; justify-content: center; cursor: pointer;
+            transition: 0.3s; color: #636e72;
         }
+        .card.empty-slot:hover {
+            border-color: var(--accent); background: #fff; color: var(--accent);
+        }
+        .empty-icon { font-size: 3rem; margin-bottom: 10px; }
+        
+        /* --- 翻牌動畫結構 --- */
+        .card-inner {
+            position: relative; width: 100%; height: 350px; 
+            transition: transform 0.8s; transform-style: preserve-3d;
+        }
+        .card.flipped .card-inner { transform: rotateY(180deg); }
+        .card.no-anim .card-inner { transform: rotateY(180deg); transition: none; } /* 實體模式不需要翻牌動畫 */
+
+        .card-front, .card-back {
+            position: absolute; width: 100%; height: 100%;
+            -webkit-backface-visibility: hidden; backface-visibility: hidden;
+            top: 0; left: 0;
+        }
+
+        .card-back {
+            background: linear-gradient(135deg, #2c3e50 25%, transparent 25%) -50px 0,
+                        linear-gradient(225deg, #2c3e50 25%, transparent 25%) -50px 0,
+                        linear-gradient(315deg, #2c3e50 25%, transparent 25%),
+                        linear-gradient(45deg, #2c3e50 25%, transparent 25%);
+            background-size: 100px 100px;
+            background-color: #34495e;
+            display: flex; align-items: center; justify-content: center;
+            border-radius: 15px 15px 0 0;
+            color: rgba(255,255,255,0.1); font-size: 3rem;
+        }
+
+        .card-front {
+            transform: rotateY(180deg);
+            background: #f1f2f6;
+            display: flex; align-items: center; justify-content: center; overflow: hidden;
+        }
+
+        .img-container { width: 100%; height: 100%; position: relative; }
         
         .card-img {
             width: 100%; height: 100%;
-            object-fit: cover; object-position: center; /* 關鍵：圖片置中 */
+            object-fit: cover; object-position: center;
             transition: transform 0.5s;
         }
 
@@ -93,7 +138,7 @@
         .air { background: rgba(241, 196, 15, 0.9); color: #333 !important; } 
         .earth { background: rgba(39, 174, 96, 0.9); } 
 
-        .content { padding: 15px; flex-grow: 1; display: flex; flex-direction: column; }
+        .content { padding: 15px; flex-grow: 1; display: flex; flex-direction: column; background: #fff; z-index: 1;}
         h3 { margin: 0 0 10px; color: var(--primary); font-size: 1.2em; border-bottom: 2px solid #f0f0f0; padding-bottom: 8px; }
         
         .meaning { margin-bottom: 8px; font-size: 0.9em; line-height: 1.5; color: #2d3436; }
@@ -108,19 +153,67 @@
             background: #f0f3f5; padding: 5px; border-radius: 5px;
         }
         .reading-status { font-size: 0.8em; margin-left: 5px; }
+        
+        .btn-group { display: flex; gap: 10px; justify-content: center; margin: 20px 0; }
+
         .action-btn {
             background: var(--accent); color: white; border: none; padding: 15px 30px;
-            border-radius: 30px; font-size: 18px; cursor: pointer; width: 100%; max-width: 300px;
-            transition: 0.3s; display: block; margin: 20px auto;
+            border-radius: 30px; font-size: 18px; cursor: pointer; flex: 1; max-width: 300px;
+            transition: 0.3s;
         }
         .action-btn:hover { background: #5649c0; box-shadow: 0 5px 15px rgba(108, 92, 231, 0.3); }
+        
+        .secondary-btn {
+            background: #b2bec3; color: #2d3436; border: none; padding: 15px;
+            border-radius: 30px; cursor: pointer; transition: 0.3s; font-weight: bold;
+        }
+        .secondary-btn:hover { background: #636e72; color: white; }
+        .ai-btn { background: linear-gradient(45deg, #0984e3, #8e44ad); color: white; }
+
+        /* --- 通用 Modal --- */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5); display: flex; justify-content: center; align-items: center;
+            z-index: 1000; opacity: 0; pointer-events: none; transition: 0.3s;
+        }
+        .modal-overlay.open { opacity: 1; pointer-events: auto; }
+        .modal {
+            background: white; width: 90%; max-width: 600px; max-height: 80vh;
+            border-radius: 15px; padding: 20px; overflow-y: auto; position: relative; display: flex; flex-direction: column;
+        }
+        .close-modal { position: absolute; top: 15px; right: 20px; font-size: 24px; cursor: pointer; }
+        
+        /* --- 歷史紀錄樣式 --- */
+        .history-item { border: 1px solid #eee; padding: 10px; border-radius: 8px; margin-bottom: 10px; background: #f9f9f9; }
+        .history-header { display: flex; justify-content: space-between; font-weight: bold; color: var(--primary); border-bottom: 1px solid #ddd; padding-bottom: 5px; margin-bottom: 5px;}
+        .history-cards { font-size: 0.9em; color: #666; }
+
+        /* --- 選牌器樣式 --- */
+        .picker-tabs { display: flex; gap: 5px; margin-bottom: 15px; overflow-x: auto; padding-bottom: 5px; }
+        .picker-tab { white-space: nowrap; padding: 8px 12px; border: 1px solid #ddd; border-radius: 20px; cursor: pointer; background: #eee; }
+        .picker-tab.active { background: var(--accent); color: white; border-color: var(--accent); }
+        
+        .picker-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 10px; max-height: 400px; overflow-y: auto; }
+        .picker-card { 
+            border: 1px solid #eee; border-radius: 8px; padding: 10px; text-align: center; cursor: pointer; transition: 0.2s;
+            display: flex; flex-direction: column; align-items: center;
+        }
+        .picker-card:hover { border-color: var(--accent); background: #f0f3f5; }
+        .picker-card span { font-size: 0.9em; margin-top: 5px; }
+        .picker-card .sm-badge { font-size: 10px; padding: 2px 6px; border-radius: 4px; color: white; margin-bottom: 5px;}
+
+        .picker-options { margin-top: 20px; border-top: 1px solid #eee; padding-top: 15px; display: flex; align-items: center; justify-content: space-between; }
+        .checkbox-wrapper { display: flex; align-items: center; gap: 10px; font-size: 1.1em; cursor: pointer; }
+        .checkbox-wrapper input { width: 20px; height: 20px; margin: 0; }
 
         .hidden { display: none !important; }
         .text-center { text-align: center; }
 
         @media (max-width: 600px) {
             .grid { grid-template-columns: 1fr; }
-            .img-container { height: 400px; }
+            .card-inner { height: 400px; }
+            .btn-group { flex-direction: column; align-items: center; }
+            .action-btn, .secondary-btn { width: 100%; }
         }
 
     </style>
@@ -128,14 +221,18 @@
 <body>
 
 <header>
-    <h1>🔮 塔羅牌義查詢與全方位占卜</h1>
+    <div class="top-actions">
+        <button class="icon-btn" onclick="openHistory()" title="查看歷史紀錄">📜</button>
+    </div>
+    <h1>🔮 塔羅牌義查詢與全方位占卜 Pro+</h1>
     <p>經典萊德偉特塔羅牌 (Rider-Waite)</p>
 </header>
 
 <div class="mode-selector">
     <button class="mode-btn active" onclick="switchMode('browse')">📖 瀏覽牌庫</button>
     <button class="mode-btn" onclick="switchMode('daily')">📅 每日一抽</button>
-    <button class="mode-btn" onclick="switchMode('spread')">🧙‍♂️ 專業牌陣 (13種)</button>
+    <button class="mode-btn" onclick="switchMode('spread')">🧙‍♂️ 線上牌陣占卜</button>
+    <button class="mode-btn" onclick="switchMode('physical')">🖐️ 實體抽牌輸入</button>
 </div>
 
 <section id="browseSection">
@@ -180,11 +277,36 @@
                 <option value="weeklyForecast">一週運勢 (7張)</option>
             </optgroup>
         </select>
-        
-        <div id="spreadDesc" class="spread-info">
-            </div>
-
+        <div id="spreadDesc" class="spread-info"></div>
         <button class="action-btn" onclick="startSpreadReading()">開始牌陣占卜</button>
+    </div>
+
+    <div id="physicalControls" class="controls hidden">
+        <div class="spread-info text-center" style="background:#dfe6e9; color:#2d3436;">
+            <strong>🖐️ 實體抽牌模式</strong><br>
+            請選擇您使用的牌陣，然後點擊下方的「空白卡槽」來輸入您實際抽到的牌。
+        </div>
+        <select id="physicalSpreadSelect" onchange="initPhysicalGrid()">
+            <optgroup label="基礎牌陣">
+                <option value="threeCard">時間之流 (3張)</option>
+                <option value="fourElement">元素平衡 (4張)</option>
+                <option value="choice">二擇一抉擇 (5張)</option>
+            </optgroup>
+            <optgroup label="愛情與關係">
+                <option value="loversPyramid">戀人金字塔 (4張)</option>
+                <option value="relationshipCross">關係十字 (5張)</option>
+            </optgroup>
+            <optgroup label="深度分析與建議">
+                <option value="mindBodySpirit">身心靈健康 (3張)</option>
+                <option value="littleCross">小十字占卜 (4張)</option>
+                <option value="problemSolving">問題解決 (3張)</option>
+                <option value="diamond">鑽石推測法 (5張)</option>
+                <option value="horseshoe">馬蹄鐵占卜 (7張)</option>
+                <option value="hexagram">六芒星占卜 (7張)</option>
+                <option value="celticCross">凱爾特十字 (10張)</option>
+            </optgroup>
+        </select>
+        <button class="secondary-btn" onclick="initPhysicalGrid()">🔄 重置卡槽</button>
     </div>
 
     <div id="dailyControls" class="controls hidden">
@@ -194,9 +316,49 @@
         <button class="action-btn" onclick="drawDailyCard()">✨ 抽取今日指引牌 ✨</button>
     </div>
 
+    <div id="resultActions" class="controls hidden">
+        <div class="btn-group">
+            <button class="secondary-btn" onclick="saveCurrentReading()">💾 保存結果</button>
+            <button class="secondary-btn ai-btn" onclick="generateAIPrompt()">🤖 複製 AI 解牌指令</button>
+        </div>
+    </div>
+
     <div id="readingGrid" class="grid"></div>
 </section>
 
+<div id="historyModal" class="modal-overlay">
+    <div class="modal">
+        <span class="close-modal" onclick="closeHistory()">&times;</span>
+        <h2>📜 歷史占卜紀錄</h2>
+        <div id="historyList"></div>
+        <button class="secondary-btn" style="width:100%; margin-top:20px;" onclick="clearHistory()">清空所有紀錄</button>
+    </div>
+</div>
+
+<div id="pickerModal" class="modal-overlay">
+    <div class="modal">
+        <span class="close-modal" onclick="closePicker()">&times;</span>
+        <h3 id="pickerTitle">選擇牌卡</h3>
+        
+        <div class="picker-tabs">
+            <div class="picker-tab active" onclick="renderPickerGrid('all', this)">全部</div>
+            <div class="picker-tab" onclick="renderPickerGrid('major', this)">大牌</div>
+            <div class="picker-tab" onclick="renderPickerGrid('fire', this)">權杖</div>
+            <div class="picker-tab" onclick="renderPickerGrid('water', this)">聖杯</div>
+            <div class="picker-tab" onclick="renderPickerGrid('air', this)">寶劍</div>
+            <div class="picker-tab" onclick="renderPickerGrid('earth', this)">錢幣</div>
+        </div>
+
+        <div id="pickerGrid" class="picker-grid"></div>
+
+        <div class="picker-options">
+            <label class="checkbox-wrapper">
+                <input type="checkbox" id="pickerReverse">
+                <span>逆位 (Reversed)</span>
+            </label>
+        </div>
+    </div>
+</div>
 
 <script>
     const imgBaseUrl = "https://www.sacred-texts.com/tarot/pkt/img/";
@@ -288,7 +450,6 @@
         {c:"peki", n:"錢幣國王", e:"earth", u:"富裕、商業頭腦、紀律", r:"貪婪、固執、物質主義"}
     ];
 
-    // --- 擴充後的牌陣定義 (共13種) ---
     const spreadDefinitions = {
         threeCard: {
             name: "時間之流牌陣",
@@ -363,11 +524,18 @@
     const browseSection = document.getElementById('browseSection');
     const readingSection = document.getElementById('readingSection');
     const spreadControls = document.getElementById('spreadControls');
+    const physicalControls = document.getElementById('physicalControls');
     const dailyControls = document.getElementById('dailyControls');
     const spreadDesc = document.getElementById('spreadDesc');
+    const resultActions = document.getElementById('resultActions');
+    const pickerModal = document.getElementById('pickerModal');
+    
     let currentType = 'all';
+    let currentReadingResult = null; // 用於儲存當前占卜結果以供保存
+    let currentMode = 'browse';
+    let pendingSlotIndex = null; // 實體抽牌時，正在選擇哪一個卡槽
 
-    // --- 洗牌 (Fisher-Yates Shuffle) ---
+    // --- 洗牌 ---
     function shuffleDeck() {
         const deck = [...cards];
         for (let i = deck.length - 1; i > 0; i--) {
@@ -377,7 +545,7 @@
         return deck;
     }
 
-    // --- UI 互動邏輯 ---
+    // --- UI 邏輯 ---
     function updateSpreadInfo() {
         const key = document.getElementById('spreadSelect').value;
         const spread = spreadDefinitions[key];
@@ -385,12 +553,14 @@
     }
 
     function switchMode(mode) {
+        currentMode = mode;
         // 更新按鈕狀態
         document.querySelectorAll('.mode-btn').forEach(btn => {
             const btnText = btn.innerText;
             if (mode === 'browse' && btnText.includes('瀏覽')) btn.classList.add('active');
             else if (mode === 'daily' && btnText.includes('每日')) btn.classList.add('active');
-            else if (mode === 'spread' && btnText.includes('牌陣')) btn.classList.add('active');
+            else if (mode === 'spread' && btnText.includes('線上')) btn.classList.add('active');
+            else if (mode === 'physical' && btnText.includes('實體')) btn.classList.add('active');
             else btn.classList.remove('active');
         });
 
@@ -398,8 +568,11 @@
         browseSection.classList.add('hidden');
         readingSection.classList.add('hidden');
         spreadControls.classList.add('hidden');
+        physicalControls.classList.add('hidden');
         dailyControls.classList.add('hidden');
+        resultActions.classList.add('hidden');
         readingGrid.innerHTML = ''; 
+        currentReadingResult = null;
 
         if (mode === 'browse') {
             browseSection.classList.remove('hidden');
@@ -411,21 +584,124 @@
                 readingGrid.innerHTML = '<div class="text-center" style="grid-column:1/-1; padding:30px; color:#666;">請點擊按鈕抽取今日指引牌。</div>';
             } else if (mode === 'spread') {
                 spreadControls.classList.remove('hidden');
-                updateSpreadInfo(); // 初始化說明
+                updateSpreadInfo();
                 readingGrid.innerHTML = '<div class="text-center" style="grid-column:1/-1; padding:30px; color:#666;">請選擇牌陣並點擊開始按鈕。</div>';
+            } else if (mode === 'physical') {
+                physicalControls.classList.remove('hidden');
+                initPhysicalGrid();
             }
         }
     }
 
-    // --- 占卜功能 ---
+    // --- 實體抽牌邏輯 ---
+    function initPhysicalGrid() {
+        const key = document.getElementById('physicalSpreadSelect').value;
+        const spread = spreadDefinitions[key];
+        readingGrid.innerHTML = '';
+        currentReadingResult = new Array(spread.positions.length).fill(null); // 初始化結果陣列
+        resultActions.classList.remove('hidden'); // 顯示保存按鈕
+
+        spread.positions.forEach((pos, index) => {
+            const div = document.createElement('div');
+            div.className = 'card empty-slot';
+            div.id = `slot-${index}`;
+            div.onclick = () => openPicker(index, pos);
+            div.innerHTML = `
+                <div class="empty-icon">➕</div>
+                <div>點擊輸入牌卡</div>
+                <small style="margin-top:5px; color:#b2bec3;">${pos}</small>
+            `;
+            readingGrid.appendChild(div);
+        });
+    }
+
+    function openPicker(index, posName) {
+        pendingSlotIndex = index;
+        document.getElementById('pickerTitle').innerText = `選擇位置：${posName}`;
+        document.getElementById('pickerReverse').checked = false;
+        renderPickerGrid('all');
+        pickerModal.classList.add('open');
+    }
+
+    function closePicker() {
+        pickerModal.classList.remove('open');
+        pendingSlotIndex = null;
+    }
+
+    function renderPickerGrid(filterType, btn) {
+        if(btn) {
+            document.querySelectorAll('.picker-tab').forEach(t => t.classList.remove('active'));
+            btn.classList.add('active');
+        }
+        
+        const grid = document.getElementById('pickerGrid');
+        grid.innerHTML = '';
+        
+        const filteredCards = filterType === 'all' ? cards : cards.filter(c => c.e === filterType);
+        
+        filteredCards.forEach(c => {
+            let elName = getElementName(c.e);
+            let badgeClass = c.e;
+            
+            const div = document.createElement('div');
+            div.className = 'picker-card';
+            div.innerHTML = `
+                <span class="sm-badge ${badgeClass}">${elName}</span>
+                <span>${c.n}</span>
+            `;
+            div.onclick = () => selectPhysicalCard(c);
+            grid.appendChild(div);
+        });
+    }
+
+    function selectPhysicalCard(cardData) {
+        const isReversed = document.getElementById('pickerReverse').checked;
+        const spreadKey = document.getElementById('physicalSpreadSelect').value;
+        const spread = spreadDefinitions[spreadKey];
+        const positionTitle = spread.positions[pendingSlotIndex];
+        
+        // 1. 更新資料
+        const resultItem = { 
+            card: cardData, 
+            isUpright: !isReversed, 
+            position: positionTitle,
+            index: pendingSlotIndex + 1 
+        };
+        currentReadingResult[pendingSlotIndex] = resultItem;
+
+        // 2. 渲染該卡片 (替換原本的 empty-slot)
+        const oldSlot = document.getElementById(`slot-${pendingSlotIndex}`);
+        const newCard = createCardElement(cardData, !isReversed, positionTitle, 0, true); // true = no animation
+        
+        // 保持ID以便後續替換 (雖然實體模式不需要再次點擊，但保持結構一致)
+        newCard.id = `slot-${pendingSlotIndex}`; 
+        
+        // 替換
+        readingGrid.replaceChild(newCard, oldSlot);
+        
+        closePicker();
+    }
+
+
+    // --- 占卜功能 (線上) ---
     function drawDailyCard() {
         readingGrid.innerHTML = '<div class="text-center" style="grid-column:1/-1; padding:30px;">正在洗牌並連結能量...</div>';
+        resultActions.classList.add('hidden');
         setTimeout(() => {
             const deck = shuffleDeck();
             const card = deck[0];
             const isUpright = Math.random() > 0.5;
             readingGrid.innerHTML = '';
-            renderDrawResult(card, isUpright, "今日指引", 1);
+            
+            const cardEl = createCardElement(card, isUpright, "今日指引", 1);
+            readingGrid.appendChild(cardEl);
+            
+            // 觸發翻牌
+            setTimeout(() => cardEl.classList.add('flipped'), 100);
+
+            // 儲存結果
+            currentReadingResult = [{ card: card, isUpright: isUpright, position: "今日指引", index: 1 }];
+            resultActions.classList.remove('hidden');
         }, 800);
     }
 
@@ -434,20 +710,31 @@
         const spread = spreadDefinitions[spreadKey];
         
         readingGrid.innerHTML = '<div class="text-center" style="grid-column:1/-1; padding:30px;">正在專注洗牌...</div>';
+        resultActions.classList.add('hidden');
         
         setTimeout(() => {
             const deck = shuffleDeck();
             readingGrid.innerHTML = '';
+            currentReadingResult = [];
 
             spread.positions.forEach((positionTitle, index) => {
                 const card = deck[index];
                 const isUpright = Math.random() > 0.5;
-                renderDrawResult(card, isUpright, positionTitle, index + 1);
+                
+                const cardEl = createCardElement(card, isUpright, positionTitle, index + 1);
+                readingGrid.appendChild(cardEl);
+
+                // 依序翻牌
+                setTimeout(() => cardEl.classList.add('flipped'), index * 300 + 100);
+
+                currentReadingResult.push({ card: card, isUpright: isUpright, position: positionTitle, index: index + 1 });
             });
+            resultActions.classList.remove('hidden');
         }, 1000);
     }
 
-    function renderDrawResult(cardData, isUpright, positionTitle, index) {
+    // --- 建立卡片 DOM ---
+    function createCardElement(cardData, isUpright, positionTitle, index, noAnim = false) {
         const imgSrc = imgBaseUrl + cardData.c + ".jpg";
         let elName = getElementName(cardData.e);
         
@@ -457,19 +744,25 @@
         const meaningText = isUpright ? cardData.u : cardData.r;
 
         const div = document.createElement('div');
-        div.className = 'card';
-        div.style.animation = `fadeIn 0.5s ease forwards ${index * 0.2}s`; // 依序淡入動畫
-        div.style.opacity = '0'; // 初始隱藏
+        div.className = `card ${noAnim ? 'flipped no-anim' : ''}`; // 如果是實體模式，直接設為 flipped 並移除 transition
+        if(!noAnim) div.style.animation = `fadeIn 0.5s ease forwards ${index * 0.1}s`;
         
         div.innerHTML = `
             <div class="content" style="padding-bottom:0;">
                 <div class="position-title">${positionTitle}</div>
             </div>
-            <div class="img-container">
-                <span class="badge ${cardData.e}">${elName}</span>
-                <img src="${imgSrc}" alt="${cardData.n}" class="card-img ${imgClass}" loading="lazy"
-                     onerror="this.src='https://via.placeholder.com/200x350?text=Image+Error'">
+            
+            <div class="card-inner">
+                <div class="card-back">🔮</div>
+                <div class="card-front">
+                    <div class="img-container">
+                        <span class="badge ${cardData.e}">${elName}</span>
+                        <img src="${imgSrc}" alt="${cardData.n}" class="card-img ${imgClass}" loading="lazy"
+                             onerror="this.src='https://via.placeholder.com/200x350?text=Image+Error'">
+                    </div>
+                </div>
             </div>
+
             <div class="content">
                 <h3>${cardData.n} <span class="reading-status ${statusClass}">(${statusText})</span></h3>
                 <div class="meaning" style="font-size:1.1em; font-weight:bold;">
@@ -481,7 +774,7 @@
                 </div>
             </div>
         `;
-        readingGrid.appendChild(div);
+        return div;
     }
 
     // --- 瀏覽功能 ---
@@ -497,12 +790,15 @@
             const imgSrc = imgBaseUrl + d.c + ".jpg";
 
             const div = document.createElement('div');
-            div.className = 'card';
+            div.className = 'card flipped no-anim'; // 瀏覽模式直接顯示正面
             div.innerHTML = `
-                <div class="img-container">
-                    <span class="badge ${d.e}">${elName}</span>
-                    <img src="${imgSrc}" alt="${d.n}" class="card-img" loading="lazy"
-                         onerror="this.src='https://via.placeholder.com/200x350?text=Image+Error'">
+                <div class="card-inner">
+                     <div class="card-front">
+                        <div class="img-container">
+                            <span class="badge ${d.e}">${elName}</span>
+                            <img src="${imgSrc}" alt="${d.n}" class="card-img" loading="lazy">
+                        </div>
+                    </div>
                 </div>
                 <div class="content">
                     <h3>${hl(d.n)}</h3>
@@ -553,7 +849,87 @@
         renderBrowse(res);
     }
 
-    // 增加一點 CSS Keyframe 動畫
+    // --- 歷史紀錄功能 ---
+    function saveCurrentReading() {
+        if (!currentReadingResult || currentReadingResult.some(i => i === null)) {
+            alert('請先完成占卜或填滿所有實體卡槽！');
+            return;
+        }
+        
+        const now = new Date().toLocaleString();
+        let history = JSON.parse(localStorage.getItem('tarotHistory')) || [];
+        
+        let spreadName = "每日一抽";
+        if(currentMode === 'spread') spreadName = spreadDefinitions[document.getElementById('spreadSelect').value].name;
+        if(currentMode === 'physical') spreadName = spreadDefinitions[document.getElementById('physicalSpreadSelect').value].name + " (實體)";
+
+        const record = {
+            date: now,
+            type: spreadName,
+            cards: currentReadingResult.map(r => `${r.position}：${r.card.n} (${r.isUpright ? '正' : '逆'})`)
+        };
+        
+        history.unshift(record); // 加到最前面
+        localStorage.setItem('tarotHistory', JSON.stringify(history));
+        alert('✅ 結果已保存到歷史紀錄！');
+    }
+
+    function openHistory() {
+        const list = document.getElementById('historyList');
+        const history = JSON.parse(localStorage.getItem('tarotHistory')) || [];
+        list.innerHTML = '';
+        
+        if (history.length === 0) {
+            list.innerHTML = '<p class="text-center">尚無紀錄</p>';
+        } else {
+            history.forEach(h => {
+                const div = document.createElement('div');
+                div.className = 'history-item';
+                div.innerHTML = `
+                    <div class="history-header"><span>${h.type}</span> <span>${h.date}</span></div>
+                    <div class="history-cards">${h.cards.join('<br>')}</div>
+                `;
+                list.appendChild(div);
+            });
+        }
+        document.getElementById('historyModal').classList.add('open');
+    }
+
+    function closeHistory() {
+        document.getElementById('historyModal').classList.remove('open');
+    }
+
+    function clearHistory() {
+        if(confirm('確定要清空所有紀錄嗎？')) {
+            localStorage.removeItem('tarotHistory');
+            openHistory();
+        }
+    }
+
+    // --- AI Prompt 生成 ---
+    function generateAIPrompt() {
+         if (!currentReadingResult || currentReadingResult.some(i => i === null)) {
+            alert('請先完成占卜或填滿所有實體卡槽！');
+            return;
+        }
+
+        let spreadName = "無牌陣";
+        if(currentMode === 'daily') spreadName = "單張指引";
+        else if(currentMode === 'spread') spreadName = spreadDefinitions[document.getElementById('spreadSelect').value].name;
+        else if(currentMode === 'physical') spreadName = spreadDefinitions[document.getElementById('physicalSpreadSelect').value].name;
+
+        let prompt = `我正在進行塔羅占卜，使用牌陣為「${spreadName}」。請幫我綜合解讀以下結果：\n\n`;
+        currentReadingResult.forEach(r => {
+            prompt += `- ${r.position}：${r.card.n} (${r.isUpright ? '正位' : '逆位'})\n  牌義關鍵字：${r.isUpright ? r.card.u : r.card.r}\n`;
+        });
+        prompt += `\n請針對這個問題給出具體的建議與指引。`;
+
+        navigator.clipboard.writeText(prompt).then(() => {
+            alert('✅ AI 指令已複製！請開啟 ChatGPT / Gemini 並貼上。');
+        });
+    }
+
+    // CSS Keyframe
     const styleSheet = document.createElement("style");
     styleSheet.innerText = `@keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }`;
     document.head.appendChild(styleSheet);
