@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>塔羅牌義查詢與全方位占卜 Ultimate</title>
+    <title>塔羅牌義查詢與全方位占卜 Ultimate v3</title>
     <style>
         :root {
             --primary: #2c3e50;
@@ -11,8 +11,7 @@
             --bg: #dfe6e9;
             --card-bg: #fff;
             --rev-color: #c0392b;
-            --gold: #f1c40f;
-            --placeholder-bg: #e1e5ea;
+            --delete-color: #e74c3c;
         }
 
         body { font-family: "Microsoft JhengHei", sans-serif; background: var(--bg); margin: 0; padding: 20px; color: #333; padding-bottom: 80px; }
@@ -57,7 +56,6 @@
             margin-bottom: 20px; text-align: left; font-size: 0.95em; line-height: 1.6;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
-        .spread-info strong { color: #d35400; }
 
         /* --- 卡片網格 --- */
         .grid {
@@ -71,6 +69,17 @@
             display: flex; flex-direction: column; position: relative;
             perspective: 1000px;
         }
+
+        /* 卡片上的刪除按鈕 (自由抽牌用) */
+        .card-delete-btn {
+            position: absolute; top: 10px; left: 10px; z-index: 10;
+            background: var(--delete-color); color: white; border: none;
+            width: 30px; height: 30px; border-radius: 50%; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3); font-size: 14px;
+            transition: 0.2s;
+        }
+        .card-delete-btn:hover { transform: scale(1.1); background: #c0392b; }
         
         /* --- 實體抽牌空白卡槽 --- */
         .card.empty-slot {
@@ -89,7 +98,7 @@
             transition: transform 0.8s; transform-style: preserve-3d;
         }
         .card.flipped .card-inner { transform: rotateY(180deg); }
-        .card.no-anim .card-inner { transform: rotateY(180deg); transition: none; } /* 實體模式不需要翻牌動畫 */
+        .card.no-anim .card-inner { transform: rotateY(180deg); transition: none; }
 
         .card-front, .card-back {
             position: absolute; width: 100%; height: 100%;
@@ -183,10 +192,19 @@
         }
         .close-modal { position: absolute; top: 15px; right: 20px; font-size: 24px; cursor: pointer; }
         
-        /* --- 歷史紀錄樣式 --- */
-        .history-item { border: 1px solid #eee; padding: 10px; border-radius: 8px; margin-bottom: 10px; background: #f9f9f9; }
-        .history-header { display: flex; justify-content: space-between; font-weight: bold; color: var(--primary); border-bottom: 1px solid #ddd; padding-bottom: 5px; margin-bottom: 5px;}
+        /* --- 歷史紀錄樣式 (新) --- */
+        .history-item { border: 1px solid #eee; padding: 10px; border-radius: 8px; margin-bottom: 10px; background: #f9f9f9; position: relative;}
+        .history-header { display: flex; justify-content: space-between; font-weight: bold; color: var(--primary); border-bottom: 1px solid #ddd; padding-bottom: 5px; margin-bottom: 5px; padding-right: 30px;}
         .history-cards { font-size: 0.9em; color: #666; }
+        .history-question { font-size: 0.95em; color: #d63031; margin-bottom: 5px; font-weight: bold; }
+        
+        /* 歷史紀錄獨立刪除按鈕 */
+        .history-del-btn {
+            position: absolute; top: 10px; right: 10px;
+            background: none; border: none; cursor: pointer; font-size: 1.2em; color: #b2bec3;
+            transition: 0.2s;
+        }
+        .history-del-btn:hover { color: var(--delete-color); transform: scale(1.1); }
 
         /* --- 選牌器樣式 --- */
         .picker-tabs { display: flex; gap: 5px; margin-bottom: 15px; overflow-x: auto; padding-bottom: 5px; }
@@ -284,10 +302,16 @@
     <div id="physicalControls" class="controls hidden">
         <div class="spread-info text-center" style="background:#dfe6e9; color:#2d3436;">
             <strong>🖐️ 實體抽牌模式</strong><br>
-            選擇對應牌陣輸入結果。若選擇「自由抽牌」，則可無限新增卡片。
+            輸入您實際抽到的牌。若選擇「自由抽牌」，可自訂問題、無限新增牌卡。
         </div>
+
+        <div id="questionInputArea" style="margin-bottom: 15px;">
+            <input type="text" id="freeQuestion" placeholder="🤔 請輸入您想問的問題... (例如：我的牌是否有牌靈？)" 
+                   style="border: 2px solid #6c5ce7; background: #f8f9fa;">
+        </div>
+
         <select id="physicalSpreadSelect" onchange="initPhysicalGrid()">
-            <option value="freeMode" style="font-weight:bold; color:#6c5ce7;">✨ 自由抽牌 (無限制，可不停加牌)</option>
+            <option value="freeMode" style="font-weight:bold; color:#6c5ce7;">✨ 自由抽牌 (無限制，可刪除)</option>
             <optgroup label="基礎牌陣">
                 <option value="threeCard">時間之流 (3張)</option>
                 <option value="fourElement">元素平衡 (4張)</option>
@@ -605,10 +629,12 @@
         readingGrid.innerHTML = '';
         resultActions.classList.remove('hidden');
 
+        // 清空之前的結果
+        if(key !== 'freeMode') currentReadingResult = [];
+
         if (key === 'freeMode') {
-            // 自由模式：初始化為空陣列，只顯示一個「新增」按鈕
             currentReadingResult = [];
-            createAddButton(1);
+            renderFreeModeGrid();
         } else {
             // 固定牌陣模式
             const spread = spreadDefinitions[key];
@@ -628,17 +654,51 @@
         }
     }
 
-    function createAddButton(nextIndex) {
-        const div = document.createElement('div');
-        div.className = 'card empty-slot';
-        div.id = 'free-add-btn';
-        div.onclick = () => openPicker('free', `第 ${nextIndex} 張`);
-        div.innerHTML = `
+    // 專門渲染自由模式的 Grid (為了支援刪除重排)
+    function renderFreeModeGrid() {
+        readingGrid.innerHTML = '';
+        
+        // 渲染已存在的卡片
+        currentReadingResult.forEach((item, index) => {
+            // 更新位置標籤 (因為可能中間被刪除了)
+            item.position = `第 ${index + 1} 張`;
+            item.index = index + 1;
+
+            const cardEl = createCardElement(item.card, item.isUpright, item.position, 0, true);
+            
+            // 加入刪除按鈕
+            const delBtn = document.createElement('button');
+            delBtn.className = 'card-delete-btn';
+            delBtn.innerHTML = '🗑️';
+            delBtn.title = '刪除此牌';
+            delBtn.onclick = (e) => {
+                e.stopPropagation(); // 阻止冒泡
+                removeFreeCard(index);
+            };
+            cardEl.appendChild(delBtn);
+            
+            readingGrid.appendChild(cardEl);
+        });
+
+        // 渲染「新增」按鈕
+        const nextIndex = currentReadingResult.length + 1;
+        const addDiv = document.createElement('div');
+        addDiv.className = 'card empty-slot';
+        addDiv.id = 'free-add-btn';
+        addDiv.onclick = () => openPicker('free', `第 ${nextIndex} 張`);
+        addDiv.innerHTML = `
             <div class="empty-icon">➕</div>
             <div>新增牌卡</div>
             <small style="margin-top:5px; color:#b2bec3;">(點擊加入第 ${nextIndex} 張)</small>
         `;
-        readingGrid.appendChild(div);
+        readingGrid.appendChild(addDiv);
+    }
+
+    function removeFreeCard(index) {
+        if(confirm('確定要刪除這張牌嗎？')) {
+            currentReadingResult.splice(index, 1); // 移除該元素
+            renderFreeModeGrid(); // 重新渲染以更新編號
+        }
     }
 
     function openPicker(index, posName) {
@@ -685,7 +745,7 @@
         const spreadKey = document.getElementById('physicalSpreadSelect').value;
         
         if (spreadKey === 'freeMode') {
-            // 自由模式邏輯
+            // 自由模式：加入陣列並重新渲染整個 Grid
             const nextIndex = currentReadingResult.length + 1;
             const positionTitle = `第 ${nextIndex} 張`;
             
@@ -696,20 +756,10 @@
                 index: nextIndex 
             };
             currentReadingResult.push(resultItem);
-
-            // 移除原本的新增按鈕
-            const addBtn = document.getElementById('free-add-btn');
-            if(addBtn) addBtn.remove();
-
-            // 顯示剛選的卡
-            const newCard = createCardElement(cardData, !isReversed, positionTitle, 0, true);
-            readingGrid.appendChild(newCard);
-
-            // 在最後面再加一個新增按鈕
-            createAddButton(nextIndex + 1);
+            renderFreeModeGrid();
 
         } else {
-            // 固定牌陣邏輯
+            // 固定牌陣：替換指定卡槽
             const spread = spreadDefinitions[spreadKey];
             const positionTitle = spread.positions[pendingSlotIndex];
             
@@ -904,7 +954,7 @@
              alert('請先輸入至少一張牌！');
              return;
         }
-        // 檢查固定牌陣是否填滿
+        
         const spreadKey = (currentMode === 'physical') ? document.getElementById('physicalSpreadSelect').value : null;
         if (spreadKey && spreadKey !== 'freeMode' && currentReadingResult.some(i => i === null)) {
             alert('請填滿所有卡槽！');
@@ -915,12 +965,20 @@
         let history = JSON.parse(localStorage.getItem('tarotHistory')) || [];
         
         let spreadName = "每日一抽";
-        if(currentMode === 'spread') spreadName = spreadDefinitions[document.getElementById('spreadSelect').value].name;
-        if(currentMode === 'physical') spreadName = spreadDefinitions[document.getElementById('physicalSpreadSelect').value].name + " (實體)";
+        let questionText = "";
+
+        if(currentMode === 'spread') {
+            spreadName = spreadDefinitions[document.getElementById('spreadSelect').value].name;
+        }
+        else if(currentMode === 'physical') {
+            spreadName = spreadDefinitions[document.getElementById('physicalSpreadSelect').value].name + " (實體)";
+            questionText = document.getElementById('freeQuestion').value.trim();
+        }
 
         const record = {
             date: now,
             type: spreadName,
+            question: questionText,
             cards: currentReadingResult.map(r => `${r.position}：${r.card.n} (${r.isUpright ? '正' : '逆'})`)
         };
         
@@ -937,17 +995,35 @@
         if (history.length === 0) {
             list.innerHTML = '<p class="text-center">尚無紀錄</p>';
         } else {
-            history.forEach(h => {
+            history.forEach((h, index) => {
                 const div = document.createElement('div');
                 div.className = 'history-item';
+                
+                // 顯示問題 (如果有)
+                const questionHtml = h.question ? `<div class="history-question">Q: ${h.question}</div>` : '';
+
                 div.innerHTML = `
-                    <div class="history-header"><span>${h.type}</span> <span>${h.date}</span></div>
+                    <div class="history-header">
+                        <span>${h.type}</span> 
+                        <span style="font-weight:normal; font-size:0.8em; color:#999;">${h.date}</span>
+                    </div>
+                    ${questionHtml}
                     <div class="history-cards">${h.cards.join('<br>')}</div>
+                    <button class="history-del-btn" onclick="deleteHistoryItem(${index})" title="刪除此筆紀錄">🗑️</button>
                 `;
                 list.appendChild(div);
             });
         }
         document.getElementById('historyModal').classList.add('open');
+    }
+
+    function deleteHistoryItem(index) {
+        if(confirm('確定要刪除這筆紀錄嗎？')) {
+            let history = JSON.parse(localStorage.getItem('tarotHistory')) || [];
+            history.splice(index, 1); // 刪除指定索引
+            localStorage.setItem('tarotHistory', JSON.stringify(history));
+            openHistory(); // 重新渲染
+        }
     }
 
     function closeHistory() {
@@ -961,27 +1037,51 @@
         }
     }
 
-    // --- AI Prompt 生成 ---
+    // --- AI Prompt 生成 (Ultimate v3 更新版) ---
     function generateAIPrompt() {
          if (!currentReadingResult || currentReadingResult.length === 0) {
             alert('請先輸入至少一張牌！');
             return;
         }
         const spreadKey = (currentMode === 'physical') ? document.getElementById('physicalSpreadSelect').value : null;
-         if (spreadKey && spreadKey !== 'freeMode' && currentReadingResult.some(i => i === null)) {
+        if (spreadKey && spreadKey !== 'freeMode' && currentReadingResult.some(i => i === null)) {
             alert('請填滿所有卡槽！');
             return;
         }
 
         let spreadName = "無牌陣";
+        let isFreeMode = false;
+        let questionText = "";
+
         if(currentMode === 'daily') spreadName = "單張指引";
         else if(currentMode === 'spread') spreadName = spreadDefinitions[document.getElementById('spreadSelect').value].name;
-        else if(currentMode === 'physical') spreadName = spreadDefinitions[document.getElementById('physicalSpreadSelect').value].name;
+        else if(currentMode === 'physical') {
+            spreadName = spreadDefinitions[spreadKey].name;
+            if(spreadKey === 'freeMode') isFreeMode = true;
+            
+            // 抓取問題
+            questionText = document.getElementById('freeQuestion').value.trim();
+        }
 
-        let prompt = `我正在進行塔羅占卜，使用牌陣為「${spreadName}」。請幫我綜合解讀以下結果：\n\n`;
+        let prompt = "";
+        
+        // 如果有問題，加在最前面
+        if (questionText) {
+             prompt += `【我的提問】：${questionText}\n\n`;
+        }
+
+        prompt += `我正在進行塔羅占卜，使用牌陣為「${spreadName}」。請幫我綜合解讀以下結果：\n\n`;
+        
         currentReadingResult.forEach(r => {
-            prompt += `- ${r.position}：${r.card.n} (${r.isUpright ? '正位' : '逆位'})\n  牌義關鍵字：${r.isUpright ? r.card.u : r.card.r}\n`;
+            if (isFreeMode) {
+                // 自由模式：只輸出 牌名 + 正逆位 (不含解釋)
+                prompt += `- ${r.position}：${r.card.n} (${r.isUpright ? '正位' : '逆位'})\n`;
+            } else {
+                // 一般模式：包含完整資訊
+                prompt += `- ${r.position}：${r.card.n} (${r.isUpright ? '正位' : '逆位'})\n  牌義關鍵字：${r.isUpright ? r.card.u : r.card.r}\n`;
+            }
         });
+        
         prompt += `\n請針對這個問題給出具體的建議與指引。`;
 
         navigator.clipboard.writeText(prompt).then(() => {
