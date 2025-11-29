@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>78張塔羅牌義查詢 (連線版)</title>
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --accent: #8e44ad;
+            --bg: #f4f7f6;
+            --card-bg: #fff;
+        }
+
+        body { font-family: "Microsoft JhengHei", sans-serif; background: var(--bg); margin: 0; padding: 20px; color: #333; }
+        
+        /* 標題與控制區 */
+        header { text-align: center; margin-bottom: 30px; }
+        .controls { max-width: 800px; margin: 0 auto 30px; text-align: center; }
+        
+        input {
+            width: 100%; padding: 15px; border: 2px solid #ddd; border-radius: 30px; 
+            font-size: 16px; outline: none; box-sizing: border-box; margin-bottom: 15px;
+            transition: 0.3s;
+        }
+        input:focus { border-color: var(--accent); box-shadow: 0 0 8px rgba(142,68,173,0.2); }
+
+        .filter-buttons { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+        .filter-btn {
+            background: #fff; border: 1px solid #ccc; padding: 8px 16px; 
+            border-radius: 20px; cursor: pointer; transition: 0.2s; font-weight: bold; color: #555;
+        }
+        .filter-btn:hover, .filter-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
+
+        /* 網格佈局 */
+        .grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); 
+            gap: 25px; max-width: 1200px; margin: 0 auto;
+        }
+
+        /* 卡片設計 */
+        .card {
+            background: var(--card-bg); border-radius: 15px; overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05); transition: transform 0.2s; position: relative;
+        }
+        .card:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+        
+        /* 圖片區域 */
+        .img-container {
+            width: 100%; height: 200px; background: #eee;
+            position: relative; overflow: hidden;
+        }
+        .card-img {
+            width: 100%; height: 100%; object-fit: cover;
+            transition: transform 0.5s;
+        }
+        .card:hover .card-img { transform: scale(1.05); }
+
+        /* 元素標籤 */
+        .badge {
+            position: absolute; top: 10px; right: 10px; 
+            color: white; padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: bold;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3); z-index: 2;
+        }
+        
+        /* 元素顏色定義 */
+        .major { background: #8e44ad; } /* 紫 */
+        .fire { background: #e74c3c; }  /* 紅 */
+        .water { background: #3498db; } /* 藍 */
+        .air { background: #f1c40f; color: #333 !important; } /* 黃 */
+        .earth { background: #27ae60; } /* 綠 */
+
+        /* 內容區域 */
+        .content { padding: 20px; }
+        h3 { margin: 0 0 12px; color: var(--primary); border-bottom: 2px solid #f0f0f0; padding-bottom: 8px; }
+        
+        .meaning { margin-bottom: 12px; font-size: 0.95em; line-height: 1.5; }
+        .label { font-weight: bold; display: block; margin-bottom: 3px; }
+        .up { color: #27ae60; }
+        .rev { color: #c0392b; }
+        .highlight { background: #fff3cd; padding: 0 2px; }
+
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>🔮 塔羅牌義資料庫 (連線版)</h1>
+    <p>需連接網路以顯示圖片</p>
+</header>
+
+<div class="controls">
+    <input type="text" id="searchInput" placeholder="輸入關鍵字搜尋 (例如：愚者、愛情、金錢...)">
+    <div class="filter-buttons">
+        <button class="filter-btn active" onclick="filter('all', this)">全部顯示</button>
+        <button class="filter-btn" onclick="filter('major', this)">大阿爾克那</button>
+        <button class="filter-btn" onclick="filter('fire', this)">權杖 (火)</button>
+        <button class="filter-btn" onclick="filter('water', this)">聖杯 (水)</button>
+        <button class="filter-btn" onclick="filter('air', this)">寶劍 (風)</button>
+        <button class="filter-btn" onclick="filter('earth', this)">錢幣 (土)</button>
+    </div>
+</div>
+
+<div id="grid" class="grid"></div>
+
+<script>
+    // 資料縮寫說明: n=name, e=element, u=upright, r=reversed
+    const cards = [
+        // --- 大阿爾克那 ---
+        {n:"0. 愚者 (The Fool)", e:"major", u:"新的開始、冒險、天真、潛力", r:"魯莽、冒險過度、愚蠢"},
+        {n:"I. 魔術師 (The Magician)", e:"major", u:"創造力、技能、意志力、顯化", r:"欺騙、操縱、才華被埋沒"},
+        {n:"II. 女祭司 (High Priestess)", e:"major", u:"直覺、神秘、潛意識、內在智慧", r:"壓抑直覺、膚淺、隱藏敵人"},
+        {n:"III. 皇后 (The Empress)", e:"major", u:"豐盛、母性、自然、感官享受", r:"依賴、創造力受阻、過度保護"},
+        {n:"IV. 皇帝 (The Emperor)", e:"major", u:"權威、結構、控制、父親形象", r:"暴政、僵化、濫用權力"},
+        {n:"V. 教皇 (The Hierophant)", e:"major", u:"傳統、信仰、宗教、團體", r:"挑戰傳統、標新立異、受限"},
+        {n:"VI. 戀人 (The Lovers)", e:"major", u:"愛、和諧、關係、選擇、結合", r:"不和諧、失衡、錯誤選擇"},
+        {n:"VII. 戰車 (The Chariot)", e:"major", u:"勝利、意志力、自律、決心", r:"失控、失敗、缺乏方向"},
+        {n:"VIII. 力量 (Strength)", e:"major", u:"內在力量、勇氣、耐心、同情", r:"自我懷疑、軟弱、恐懼"},
+        {n:"IX. 隱士 (The Hermit)", e:"major", u:"內省、孤獨、尋求真理、指導", r:"孤立、寂寞、退縮、迷失"},
+        {n:"X. 命運之輪 (Wheel of Fortune)", e:"major", u:"好運、業力、生命週期、機會", r:"厄運、抵抗變化、惡性循環"},
+        {n:"XI. 正義 (Justice)", e:"major", u:"公正、真理、因果、法律", r:"不公、偏見、不誠實"},
+        {n:"XII. 吊人 (Hanged Man)", e:"major", u:"犧牲、新視角、暫停、等待", r:"無謂犧牲、停滯、拖延"},
+        {n:"XIII. 死神 (Death)", e:"major", u:"結束、轉變、重生、斷捨離", r:"抗拒改變、停滯、無法釋懷"},
+        {n:"XIV. 節制 (Temperance)", e:"major", u:"平衡、適度、耐心、和諧", r:"失衡、過度、缺乏耐心"},
+        {n:"XV. 惡魔 (The Devil)", e:"major", u:"束縛、成癮、物質主義、性慾", r:"打破束縛、重獲自由、覺醒"},
+        {n:"XVI. 高塔 (The Tower)", e:"major", u:"突變、災難、啟示、混亂", r:"避免災難、延遲改變、重建"},
+        {n:"XVII. 星星 (The Star)", e:"major", u:"希望、靈感、平靜、療癒", r:"絕望、缺乏信心、錯失機會"},
+        {n:"XVIII. 月亮 (The Moon)", e:"major", u:"幻覺、恐懼、潛意識、不安", r:"混亂澄清、釋放恐懼、揭露"},
+        {n:"XIX. 太陽 (The Sun)", e:"major", u:"快樂、成功、活力、溫暖", r:"暫時挫折、過度樂觀、虛榮"},
+        {n:"XX. 審判 (Judgement)", e:"major", u:"重生、召喚、覺醒、因果", r:"自我懷疑、拒絕召喚、後悔"},
+        {n:"XXI. 世界 (The World)", e:"major", u:"完成、整合、成就、圓滿", r:"未完成、缺乏收尾、延遲"},
+
+        // --- 權杖 (火) ---
+        {n:"權杖王牌 (Ace of Wands)", e:"fire", u:"靈感、新機會、成長、熱情", r:"延遲、缺乏動力、錯失機會"},
+        {n:"權杖二 (Two of Wands)", e:"fire", u:"計畫、未來展望、決定、發現", r:"恐懼未知、缺乏計畫、猶豫"},
+        {n:"權杖三 (Three of Wands)", e:"fire", u:"擴張、遠見、海外機會、進步", r:"障礙、延誤、挫折、退縮"},
+        {n:"權杖四 (Four of Wands)", e:"fire", u:"慶祝、和諧、歸屬感、穩定", r:"家庭衝突、過渡期、不穩定"},
+        {n:"權杖五 (Five of Wands)", e:"fire", u:"衝突、競爭、分歧、混亂", r
