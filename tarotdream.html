@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>塔羅牌義查詢與全方位占卜 Pro+</title>
+    <title>塔羅牌義查詢與全方位占卜 Ultimate</title>
     <style>
         :root {
             --primary: #2c3e50;
@@ -224,7 +224,7 @@
     <div class="top-actions">
         <button class="icon-btn" onclick="openHistory()" title="查看歷史紀錄">📜</button>
     </div>
-    <h1>🔮 塔羅牌義查詢與全方位占卜 Pro+</h1>
+    <h1>🔮 塔羅牌義查詢與全方位占卜 Ultimate</h1>
     <p>經典萊德偉特塔羅牌 (Rider-Waite)</p>
 </header>
 
@@ -284,9 +284,10 @@
     <div id="physicalControls" class="controls hidden">
         <div class="spread-info text-center" style="background:#dfe6e9; color:#2d3436;">
             <strong>🖐️ 實體抽牌模式</strong><br>
-            請選擇您使用的牌陣，然後點擊下方的「空白卡槽」來輸入您實際抽到的牌。
+            選擇對應牌陣輸入結果。若選擇「自由抽牌」，則可無限新增卡片。
         </div>
         <select id="physicalSpreadSelect" onchange="initPhysicalGrid()">
+            <option value="freeMode" style="font-weight:bold; color:#6c5ce7;">✨ 自由抽牌 (無限制，可不停加牌)</option>
             <optgroup label="基礎牌陣">
                 <option value="threeCard">時間之流 (3張)</option>
                 <option value="fourElement">元素平衡 (4張)</option>
@@ -306,7 +307,7 @@
                 <option value="celticCross">凱爾特十字 (10張)</option>
             </optgroup>
         </select>
-        <button class="secondary-btn" onclick="initPhysicalGrid()">🔄 重置卡槽</button>
+        <button class="secondary-btn" onclick="initPhysicalGrid()">🔄 重置 / 清空</button>
     </div>
 
     <div id="dailyControls" class="controls hidden">
@@ -451,6 +452,11 @@
     ];
 
     const spreadDefinitions = {
+        freeMode: {
+            name: "自由抽牌 (無牌陣)",
+            description: "無限制抽牌張數，適合直覺式占卜或不斷追問。",
+            positions: [] // 動態生成
+        },
         threeCard: {
             name: "時間之流牌陣",
             description: "最基礎也最常用的牌陣。用於查看某件事的過去起因、現在狀況以及未來的自然發展趨勢。",
@@ -596,28 +602,48 @@
     // --- 實體抽牌邏輯 ---
     function initPhysicalGrid() {
         const key = document.getElementById('physicalSpreadSelect').value;
-        const spread = spreadDefinitions[key];
         readingGrid.innerHTML = '';
-        currentReadingResult = new Array(spread.positions.length).fill(null); // 初始化結果陣列
-        resultActions.classList.remove('hidden'); // 顯示保存按鈕
+        resultActions.classList.remove('hidden');
 
-        spread.positions.forEach((pos, index) => {
-            const div = document.createElement('div');
-            div.className = 'card empty-slot';
-            div.id = `slot-${index}`;
-            div.onclick = () => openPicker(index, pos);
-            div.innerHTML = `
-                <div class="empty-icon">➕</div>
-                <div>點擊輸入牌卡</div>
-                <small style="margin-top:5px; color:#b2bec3;">${pos}</small>
-            `;
-            readingGrid.appendChild(div);
-        });
+        if (key === 'freeMode') {
+            // 自由模式：初始化為空陣列，只顯示一個「新增」按鈕
+            currentReadingResult = [];
+            createAddButton(1);
+        } else {
+            // 固定牌陣模式
+            const spread = spreadDefinitions[key];
+            currentReadingResult = new Array(spread.positions.length).fill(null);
+            spread.positions.forEach((pos, index) => {
+                const div = document.createElement('div');
+                div.className = 'card empty-slot';
+                div.id = `slot-${index}`;
+                div.onclick = () => openPicker(index, pos);
+                div.innerHTML = `
+                    <div class="empty-icon">➕</div>
+                    <div>點擊輸入牌卡</div>
+                    <small style="margin-top:5px; color:#b2bec3;">${pos}</small>
+                `;
+                readingGrid.appendChild(div);
+            });
+        }
+    }
+
+    function createAddButton(nextIndex) {
+        const div = document.createElement('div');
+        div.className = 'card empty-slot';
+        div.id = 'free-add-btn';
+        div.onclick = () => openPicker('free', `第 ${nextIndex} 張`);
+        div.innerHTML = `
+            <div class="empty-icon">➕</div>
+            <div>新增牌卡</div>
+            <small style="margin-top:5px; color:#b2bec3;">(點擊加入第 ${nextIndex} 張)</small>
+        `;
+        readingGrid.appendChild(div);
     }
 
     function openPicker(index, posName) {
         pendingSlotIndex = index;
-        document.getElementById('pickerTitle').innerText = `選擇位置：${posName}`;
+        document.getElementById('pickerTitle').innerText = `選擇：${posName}`;
         document.getElementById('pickerReverse').checked = false;
         renderPickerGrid('all');
         pickerModal.classList.add('open');
@@ -657,27 +683,50 @@
     function selectPhysicalCard(cardData) {
         const isReversed = document.getElementById('pickerReverse').checked;
         const spreadKey = document.getElementById('physicalSpreadSelect').value;
-        const spread = spreadDefinitions[spreadKey];
-        const positionTitle = spread.positions[pendingSlotIndex];
         
-        // 1. 更新資料
-        const resultItem = { 
-            card: cardData, 
-            isUpright: !isReversed, 
-            position: positionTitle,
-            index: pendingSlotIndex + 1 
-        };
-        currentReadingResult[pendingSlotIndex] = resultItem;
+        if (spreadKey === 'freeMode') {
+            // 自由模式邏輯
+            const nextIndex = currentReadingResult.length + 1;
+            const positionTitle = `第 ${nextIndex} 張`;
+            
+            const resultItem = { 
+                card: cardData, 
+                isUpright: !isReversed, 
+                position: positionTitle,
+                index: nextIndex 
+            };
+            currentReadingResult.push(resultItem);
 
-        // 2. 渲染該卡片 (替換原本的 empty-slot)
-        const oldSlot = document.getElementById(`slot-${pendingSlotIndex}`);
-        const newCard = createCardElement(cardData, !isReversed, positionTitle, 0, true); // true = no animation
-        
-        // 保持ID以便後續替換 (雖然實體模式不需要再次點擊，但保持結構一致)
-        newCard.id = `slot-${pendingSlotIndex}`; 
-        
-        // 替換
-        readingGrid.replaceChild(newCard, oldSlot);
+            // 移除原本的新增按鈕
+            const addBtn = document.getElementById('free-add-btn');
+            if(addBtn) addBtn.remove();
+
+            // 顯示剛選的卡
+            const newCard = createCardElement(cardData, !isReversed, positionTitle, 0, true);
+            readingGrid.appendChild(newCard);
+
+            // 在最後面再加一個新增按鈕
+            createAddButton(nextIndex + 1);
+
+        } else {
+            // 固定牌陣邏輯
+            const spread = spreadDefinitions[spreadKey];
+            const positionTitle = spread.positions[pendingSlotIndex];
+            
+            const resultItem = { 
+                card: cardData, 
+                isUpright: !isReversed, 
+                position: positionTitle,
+                index: pendingSlotIndex + 1 
+            };
+            currentReadingResult[pendingSlotIndex] = resultItem;
+
+            const oldSlot = document.getElementById(`slot-${pendingSlotIndex}`);
+            const newCard = createCardElement(cardData, !isReversed, positionTitle, 0, true);
+            newCard.id = `slot-${pendingSlotIndex}`; 
+            
+            readingGrid.replaceChild(newCard, oldSlot);
+        }
         
         closePicker();
     }
@@ -851,8 +900,14 @@
 
     // --- 歷史紀錄功能 ---
     function saveCurrentReading() {
-        if (!currentReadingResult || currentReadingResult.some(i => i === null)) {
-            alert('請先完成占卜或填滿所有實體卡槽！');
+        if (!currentReadingResult || currentReadingResult.length === 0) {
+             alert('請先輸入至少一張牌！');
+             return;
+        }
+        // 檢查固定牌陣是否填滿
+        const spreadKey = (currentMode === 'physical') ? document.getElementById('physicalSpreadSelect').value : null;
+        if (spreadKey && spreadKey !== 'freeMode' && currentReadingResult.some(i => i === null)) {
+            alert('請填滿所有卡槽！');
             return;
         }
         
@@ -869,7 +924,7 @@
             cards: currentReadingResult.map(r => `${r.position}：${r.card.n} (${r.isUpright ? '正' : '逆'})`)
         };
         
-        history.unshift(record); // 加到最前面
+        history.unshift(record);
         localStorage.setItem('tarotHistory', JSON.stringify(history));
         alert('✅ 結果已保存到歷史紀錄！');
     }
@@ -908,8 +963,13 @@
 
     // --- AI Prompt 生成 ---
     function generateAIPrompt() {
-         if (!currentReadingResult || currentReadingResult.some(i => i === null)) {
-            alert('請先完成占卜或填滿所有實體卡槽！');
+         if (!currentReadingResult || currentReadingResult.length === 0) {
+            alert('請先輸入至少一張牌！');
+            return;
+        }
+        const spreadKey = (currentMode === 'physical') ? document.getElementById('physicalSpreadSelect').value : null;
+         if (spreadKey && spreadKey !== 'freeMode' && currentReadingResult.some(i => i === null)) {
+            alert('請填滿所有卡槽！');
             return;
         }
 
