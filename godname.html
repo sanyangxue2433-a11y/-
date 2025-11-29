@@ -3,198 +3,287 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>道教神仙寶誥大全</title>
+    <title>道教神仙寶誥萬神殿</title>
     <style>
         :root {
             --primary-color: #8B0000; /* 深紅 */
-            --secondary-color: #FFD700; /* 金色 */
-            --bg-color: #fdfbf7; /* 米白紙質感 */
-            --text-color: #333;
+            --secondary-color: #D4AF37; /* 香檳金 */
+            --bg-color: #f8f4e6; /* 仿古紙色 */
+            --card-bg: #fffbf0;
+            --text-color: #2c2c2c;
         }
 
         body {
             font-family: "Microsoft JhengHei", "Heiti TC", sans-serif;
             background-color: var(--bg-color);
+            background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23d4af37' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E");
             color: var(--text-color);
             margin: 0;
             padding: 0;
         }
 
-        /* 標題區 */
         header {
             background-color: var(--primary-color);
+            background-image: linear-gradient(to bottom, #a00000, #8B0000);
             color: var(--secondary-color);
             text-align: center;
-            padding: 2rem 1rem;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+            padding: 3rem 1rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            border-bottom: 3px solid var(--secondary-color);
         }
 
         header h1 {
             margin: 0;
-            font-size: 2.5rem;
+            font-size: 3rem;
             letter-spacing: 5px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
         }
 
         header p {
-            margin-top: 10px;
-            font-size: 1.1rem;
+            margin-top: 15px;
+            font-size: 1.2rem;
             opacity: 0.9;
+            font-weight: 300;
         }
 
-        /* 搜尋區 */
         .search-container {
             text-align: center;
-            padding: 2rem;
+            padding: 1.5rem;
             position: sticky;
             top: 0;
             background-color: var(--bg-color);
             z-index: 100;
-            border-bottom: 2px solid #ddd;
+            border-bottom: 2px solid #e0daca;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
 
         #searchInput {
-            width: 80%;
-            max-width: 500px;
-            padding: 12px 20px;
-            font-size: 16px;
+            width: 90%;
+            max-width: 600px;
+            padding: 15px 25px;
+            font-size: 18px;
             border: 2px solid var(--primary-color);
-            border-radius: 25px;
+            border-radius: 50px;
             outline: none;
+            transition: all 0.3s;
+            background-color: #fff;
         }
 
-        /* 列表區 */
+        #searchInput:focus {
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.5);
+            border-color: var(--secondary-color);
+        }
+
         .grid-container {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 20px;
-            padding: 20px;
-            max-width: 1200px;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 25px;
+            padding: 30px;
+            max-width: 1300px;
             margin: 0 auto;
         }
 
         .card {
-            background: white;
-            border: 1px solid #ddd;
-            border-radius: 10px;
+            background: var(--card-bg);
+            border: 1px solid #e0daca;
+            border-radius: 12px;
             overflow: hidden;
             cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
+            transition: all 0.3s ease;
             text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            position: relative;
         }
 
         .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+            transform: translateY(-8px);
+            box-shadow: 0 12px 25px rgba(0,0,0,0.15);
             border-color: var(--secondary-color);
+        }
+
+        .img-container {
+            width: 100%;
+            height: 260px;
+            overflow: hidden;
+            background-color: #f0eee4;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
         .card img {
             width: 100%;
-            height: 250px;
+            height: 100%;
             object-fit: cover;
-            background-color: #eee;
+            transition: transform 0.5s;
+        }
+        
+        /* 圖片讀取失敗時的替換樣式 */
+        .card img.error-fallback {
+             object-fit: contain;
+             padding: 40px;
+             opacity: 0.6;
+             filter: grayscale(100%);
+        }
+
+        .card:hover img:not(.error-fallback) {
+            transform: scale(1.08);
         }
 
         .card h3 {
-            margin: 15px 0;
+            margin: 15px 0 20px 0;
             color: var(--primary-color);
+            font-size: 1.3rem;
+            font-weight: bold;
         }
 
-        /* 彈出視窗 (Modal) */
+        /* 彈出視窗 */
         .modal {
-            display: none; 
-            position: fixed; 
-            z-index: 1000; 
+            display: none;
+            position: fixed;
+            z-index: 1000;
             left: 0;
             top: 0;
-            width: 100%; 
-            height: 100%; 
-            background-color: rgba(0,0,0,0.7); 
-            overflow: auto;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.75);
+            backdrop-filter: blur(3px);
+            overflow-y: auto; /* 允許視窗本身滾動 */
         }
 
         .modal-content {
-            background-color: #fff;
-            margin: 5% auto; 
-            padding: 0;
-            border: 1px solid #888;
-            width: 90%;
-            max-width: 800px;
-            border-radius: 10px;
+            background-color: var(--card-bg);
+            margin: 3% auto;
+            border: none;
+            width: 95%;
+            max-width: 900px;
+            border-radius: 15px;
             position: relative;
-            animation: fadeIn 0.4s;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+            animation: slideIn 0.4s ease;
+            overflow: hidden;
         }
 
-        @keyframes fadeIn {
-            from {opacity: 0; transform: translateY(-50px);}
+        @keyframes slideIn {
+            from {opacity: 0; transform: translateY(30px);}
             to {opacity: 1; transform: translateY(0);}
         }
 
         .close {
-            color: #aaa;
+            color: var(--secondary-color);
             float: right;
-            font-size: 28px;
+            font-size: 32px;
             font-weight: bold;
             position: absolute;
-            right: 20px;
-            top: 10px;
+            right: 25px;
+            top: 15px;
             cursor: pointer;
+            z-index: 101;
+            transition: color 0.2s;
+            text-shadow: 0 0 5px rgba(0,0,0,0.5);
         }
 
         .close:hover {
-            color: var(--primary-color);
+            color: white;
         }
 
         .modal-header {
-            padding: 20px;
+            padding: 25px;
             background-color: var(--primary-color);
-            color: white;
-            border-radius: 10px 10px 0 0;
+            background-image: linear-gradient(to right, var(--primary-color), #a00000);
+            color: var(--secondary-color);
             text-align: center;
+            border-bottom: 3px solid var(--secondary-color);
+        }
+        
+        .modal-header h2 {
+            margin: 0;
+            font-size: 2rem;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
         }
 
         .modal-body {
-            padding: 25px;
-            line-height: 1.8;
+            padding: 30px;
+            line-height: 1.9;
+            font-size: 1.1rem;
+            max-height: 80vh; /* 設定最大高度 */
+            overflow-y: auto; /* 內容過長時出現卷軸 */
+        }
+
+        .modal-img-box {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f0eee4;
+            border-radius: 10px;
+        }
+
+        #modalImage {
+            max-width: 100%;
+            max-height: 500px;
+            border-radius: 5px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            object-fit: contain;
         }
 
         .baogao-box {
-            background-color: #fff8e1;
-            padding: 20px;
-            border-left: 5px solid var(--secondary-color);
-            margin-bottom: 20px;
-            font-weight: bold;
+            background-color: #fffbe0;
+            padding: 25px;
+            border-left: 6px solid var(--secondary-color);
+            margin: 25px 0;
+            font-weight: 500;
+            white-space: pre-wrap; /* 保留換行格式 */
+            font-family: "KaiTi", "楷体", serif; /* 寶誥用楷體更莊嚴 */
+            font-size: 1.2rem;
+            color: #5a4a00;
+            box-shadow: inset 0 0 10px rgba(212, 175, 55, 0.1);
         }
 
         .section-title {
             color: var(--primary-color);
-            border-bottom: 1px solid #ddd;
-            padding-bottom: 10px;
-            margin-top: 20px;
-            margin-bottom: 15px;
+            border-bottom: 2px solid var(--secondary-color);
+            padding-bottom: 12px;
+            margin-top: 35px;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+            display: inline-block;
+        }
+        
+        /* 卷軸美化 */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg-color);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--secondary-color);
+            border-radius: 5px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #b3942e;
         }
 
-        /* 圖片佔位符 */
-        .placeholder-text {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 250px;
-            background: #eee;
-            color: #777;
+        @media (max-width: 768px) {
+            header h1 { font-size: 2rem; }
+            .grid-container { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 15px; padding: 15px; }
+            .card img { height: 200px; }
+            .modal-content { width: 100%; margin: 0; border-radius: 0; height: 100%; max-width: none;}
+            .modal-body { max-height: none; padding: 20px; }
+             .close { right: 15px; top: 15px; color: white;}
         }
-
     </style>
 </head>
 <body>
 
 <header>
-    <h1>道教神仙寶鑑</h1>
-    <p>收錄諸天仙真寶誥、聖像與簡介</p>
+    <h1>道教神仙寶誥萬神殿</h1>
+    <p>彙集三清四御、諸天星君、護法仙真之聖像與寶誥</p>
 </header>
 
 <div class="search-container">
-    <input type="text" id="searchInput" placeholder="搜尋神仙名稱 (如: 玉皇、慈航、關聖)...">
+    <input type="text" id="searchInput" placeholder="在此輸入神仙名號或關鍵字搜尋 (例如: 財神, 觀音, 文昌, 雷神)...">
 </div>
 
 <div class="grid-container" id="deityGrid">
@@ -207,78 +296,237 @@
             <h2 id="modalTitle">神仙名稱</h2>
         </div>
         <div class="modal-body">
-            <div style="text-align: center; margin-bottom: 20px;">
-                 <img id="modalImage" src="" alt="神像" style="max-width: 100%; max-height: 400px; border-radius: 5px;">
+            <div class="modal-img-box">
+                 <img id="modalImage" src="" alt="神像">
             </div>
 
             <h3 class="section-title">寶誥</h3>
-            <div class="baogao-box">
-                <p id="modalBaogao">這裡顯示寶誥內容...</p>
-            </div>
+            <div class="baogao-box" id="modalBaogao">
+                </div>
 
-            <h3 class="section-title">簡介與神職</h3>
-            <p id="modalDesc">這裡顯示介紹...</p>
+            <h3 class="section-title">聖紀簡介</h3>
+            <div id="modalDesc">
+                </div>
         </div>
     </div>
 </div>
 
 <script>
-    // --- 1. 資料庫 (您可以由此處新增更多神仙) ---
-    // image 欄位請填入圖片的網址，若無圖片可留空
+    // 預設的替代圖片 (當神像圖讀取失敗時顯示這個)
+    // 這裡使用一個公開的太極圖案作為範例
+    const FALLBACK_IMAGE = "https://upload.wikimedia.org/wikipedia/commons/thumb/1/17/Yin_yang.svg/200px-Yin_yang.svg.png";
+
+    // --- 超大型神仙資料庫 (約40位核心神祇) ---
     const deities = [
+        // --- 三清道祖 ---
         {
-            name: "玉皇大帝",
-            image: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/62/Jade_Emperor.jpg/440px-Jade_Emperor.jpg", 
-            baogao: "志心皈命禮。<br>太上彌羅無上天，妙有玄真境。<br>渺渺紫金闕，太微玉清宮。<br>無極無上聖，廓落發光明。<br>寂寂浩無宗，玄範總十方。<br>湛寂真常道，恢漠大神通。<br>玉皇大天尊，玄穹高上帝。",
-            desc: "玉皇大帝，全稱「太上開天執符御歷含真體道金闕雲宮九穹御歷萬道無為通明大殿昊天金闕玉皇大天尊玄穹高上帝」，簡稱「玉帝」或「天公」。<br><br>祂是道教神系中地位極高的神祇，統轄三界十方諸神與四生六道芸芸眾生。"
+            name: "元始天尊",
+            image: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Yuanshi_Tianzun_White_Cloud_Temple_Beijing.jpg/300px-Yuanshi_Tianzun_White_Cloud_Temple_Beijing.jpg",
+            baogao: "志心皈命禮。\n三界之上，梵炁彌羅。\n上極無上，天中之天。\n鬱羅蕭臺，玉山上京。\n渺渺金闕，森森羅天。\n含虛淳寂，上極無上。\n宇宙之祖，萬道之宗。\n玉清聖境，元始天尊。",
+            desc: "【三清之首】全稱「玉清聖境虛無自然元始天尊」。象徵天地未形、混沌未開之前的「無極」狀態，是宇宙大道的源頭。"
         },
         {
-            name: "慈航真人 (觀音大士)",
-            image: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Guanyin.jpg/300px-Guanyin.jpg", 
-            baogao: "志心皈命禮。<br>莊王毓秀，受帝命而誕生；<br>教闡南洋，奉敕旨而救劫。<br>尋聲感應，動念垂慈。<br>聖德昭彰，玄功莫測。<br>幽顯昭蘇而蒙恩濟度，<br>品物咸賴而荷惠生成。<br>外道仰依，邪魔拱手。<br>大悲大願，大聖大慈。<br>尋聲救苦救難，慈航普度天尊。",
-            desc: "慈航真人，即佛教所稱之觀世音菩薩。在道教中，祂被尊稱為「慈航大士」或「慈航普度天尊」。<br><br>傳說中祂本是元始天尊門下十二金仙之一，後發願普度眾生，常化身千萬，聞聲救苦。"
+            name: "靈寶天尊",
+            image: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/Lingbao_Tianzun_White_Cloud_Temple_Beijing.jpg/300px-Lingbao_Tianzun_White_Cloud_Temple_Beijing.jpg",
+            baogao: "志心皈命禮。\n居上清境，七寶苑中。\n含天地未看之氣，養胎息於真黃。\n三天教主，萬法宗師。\n上清真境，靈寶天尊。",
+            desc: "【三清之二】全稱「上清真境靈寶天尊」。象徵「有」的開始，主宰大道的運化，傳授經籍法科。"
+        },
+        {
+            name: "道德天尊 (太上老君)",
+            image: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/Taishang_Laojun_White_Cloud_Temple_Beijing.jpg/300px-Taishang_Laojun_White_Cloud_Temple_Beijing.jpg",
+            baogao: "志心皈命禮。\n隨方設教，歷劫度人。\n為皇者師，帝者師，王者師，假名易號。\n立天之道，地之道，人之道，隱聖顯凡。\n總千二百之官君，包萬億重之梵炁。\n太上老君，道德天尊。",
+            desc: "【三清之三】全稱「太清境道德天尊」，即老子。是「道」的化身，為道教教主，傳下《道德經》教化世人。"
+        },
+        // --- 四御與高階天帝 ---
+        {
+            name: "玉皇大帝",
+            image: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/82/Jade_Emperor_Xiamen.jpg/300px-Jade_Emperor_Xiamen.jpg",
+            baogao: "志心皈命禮。\n太上彌羅無上天，妙有玄真境。\n渺渺紫金闕，太微玉清宮。\n無極無上聖，廓落發光明。\n寂寂浩無宗，玄範總十方。\n湛寂真常道，恢漠大神通。\n玉皇大天尊，玄穹高上帝。",
+            desc: "【萬天之主】簡稱「玉帝」、「天公」。統御諸天、綜領萬聖，主宰宇宙萬物的興衰與吉凶禍福，地位極其崇高。"
+        },
+        {
+            name: "紫微北極大帝",
+            image: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Ziwei_Dadi_White_Cloud_Temple_Beijing.jpg/300px-Ziwei_Dadi_White_Cloud_Temple_Beijing.jpg",
+            baogao: "志心皈命禮。\n大羅天闕，紫微星宮。\n尊居北極之高，位正中天之上。\n璇璣玉衡齊七政，總天經地緯。\n北極大帝，紫微帝君。",
+            desc: "【眾星之主】四御之一。統率北斗諸星及周天星辰，掌管人間帝王更替與生靈壽命。"
+        },
+        {
+            name: "勾陳上宮天皇大帝",
+            image: "", // 暫無穩定圖片，將顯示預設圖
+            baogao: "志心皈命禮。\n紫微宸極，勾陳天宮。\n位在北極，為萬星之主。\n佐玉皇而執掌天經地緯，統諸星而主持兵革之權。\n勾陳上宮，天皇大帝。",
+            desc: "【主兵革】四御之一。協助玉帝執掌南北兩極與天地人三才，並主宰人間的兵革戰爭之事。"
+        },
+         {
+            name: "后土皇地祇",
+            image: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/77/Houtu_White_Cloud_Temple_Beijing.jpg/300px-Houtu_White_Cloud_Temple_Beijing.jpg",
+            baogao: "志心皈命禮。\n九華玉闕，七寶皇房。\n承天稟命之期，主陰執陽之柄。\n道推尊而含弘光大，德數蓄而柔順剛健。\n掌山嶽土地之靈，主陰陽生育之氣。\n承天效法，后土皇地祇。",
+            desc: "【大地之母】四御之一。掌管大地山川、陰陽生育、萬物滋長。與天公相對，人稱「地母娘娘」。"
+        },
+        {
+            name: "南極長生大帝",
+            image: "", 
+             baogao: "志心皈命禮。\n高上神霄府，凝神煥照宮。\n會元始祖炁以分真，應妙道虛無而開化。\n位乎九天之上，統理諸天，總制萬靈。\n南極長生大帝，統天元聖天尊。",
+            desc: "【主壽考】四御之一。統御萬靈，主宰人間壽命禍福。"
+        },
+        // --- 諸天星君與先天大神 ---
+        {
+            name: "斗母元君",
+            image: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/49/Doumu_White_Cloud_Temple_Beijing.jpg/300px-Doumu_White_Cloud_Temple_Beijing.jpg",
+            baogao: "志心皈命禮。\n西天竺國，大智光中。\n真空妙相法王師，無上玄元天母主。\n金光爍處，日月潛輝。\n大悲大願，大聖大慈。\n圓明道母，天尊。",
+            desc: "【眾星之母】北斗眾星之母。三目四首八臂，掌管星辰與人的本命元辰。凡犯太歲者多禮拜斗母以求平安。"
+        },
+         {
+            name: "太乙救苦天尊",
+            image: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Taiyi_Jiuku_Tianzun_White_Cloud_Temple_Beijing.jpg/300px-Taiyi_Jiuku_Tianzun_White_Cloud_Temple_Beijing.jpg",
+            baogao: "志心皈命禮。\n青華長樂界，東極妙嚴宮。\n七寶芳騫林，九色蓮花座。\n萬真環拱內，百億瑞光中。\n玉清靈寶尊，應化玄元始。\n大悲大願，大聖大慈。\n太乙救苦天尊。",
+            desc: "【尋聲救苦】又稱東極青華大帝。誓願救度一切受苦眾生，能化身三界救苦，引渡亡魂往生東方長樂世界。"
+        },
+        {
+            name: "三官大帝 (天官、地官、水官)",
+            image: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/Sanguan_Dadi_White_Cloud_Temple_Beijing.jpg/300px-Sanguan_Dadi_White_Cloud_Temple_Beijing.jpg",
+            baogao: "(總誥) 志心皈命禮。\n唯三聖人，乃一太極。\n普受浩劫家之命，鼎膺無量品之褒。\n紫微清虛洞陰，總領功過。\n賜福赦罪解厄，普濟存亡。\n道冠諸天，恩覃三界。\n大悲大願，大聖大慈。\n三元三品，三官大帝，三宮九府感應天尊。",
+            desc: "【賜福赦罪解厄】俗稱「三界公」。天官賜福（上元節），地官赦罪（中元節），水官解厄（下元節）。掌管三界眾生功過。"
+        },
+        {
+            name: "雷聲普化天尊 (九天應元)",
+            image: "", 
+            baogao: "志心皈命禮。\n九天應元府，無上玉清王。\n化形而滿十方，談道而趺九鳳。\n三十六天之上，閱寶笈，考瓊書。\n千五百劫之先，位正真，權大化。\n手舉金光如意，宣說玉樞寶經。\n不順化作微塵，發號疾如風火。\n以清靜心而弘大願，以智慧而伏諸魔。\n總司五雷，運心三界。\n群生父，萬靈師。\n大聖大慈，至皇至道。\n九天應元雷聲普化天尊。",
+            desc: "【雷部最高神】統轄雷部諸神，主天之災福，持物之權衡，掌物掌人，司生司殺。"
+        },
+        // --- 著名護法與元帥 ---
+        {
+            name: "玄天上帝 (真武大帝)",
+            image: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Zhenwu_Statue_in_Wudang_Mountains_01.jpg/300px-Zhenwu_Statue_in_Wudang_Mountains_01.jpg",
+            baogao: "志心皈命禮。\n混元六天，傳法教主。\n修真悟道，濟度群迷。\n披髮仗劍，七星在手。\n鎮天助順，真武靈應。\n福德衍慶，仁慈正烈。\n治世福神，玉虛師相。\n玄天上帝，金闕化身，蕩魔天尊。",
+            desc: "【北方鎮守】又稱「上帝公」。統率三十六天將，鎮守北方，腳踏龜蛇，威猛無比，能掃除妖魔鬼怪。"
+        },
+        {
+            name: "王靈官 (王天君)",
+            image: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Wang_Lingguan_White_Cloud_Temple_Beijing.jpg/300px-Wang_Lingguan_White_Cloud_Temple_Beijing.jpg",
+            baogao: "志心皈命禮。\n先天主將，一炁神君。\n都天糾察大靈官，三界無私猛烈將。\n金睛朱髮，號三五火車雷公。\n鳳嘴銀牙，統百萬貔貅神將。\n三眼能觀天下事，一鞭驚醒世間人。\n太乙雷聲應化天尊。",
+            desc: "【道教第一護法】赤面三目，手持金鞭，鐵面無私。專司糾察善惡，鎮守道觀山門，有「三眼能觀天下事，一鞭驚醒世間人」之威名。"
+        },
+        {
+            name: "趙公明元帥 (玄壇真君)",
+            image: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Zhao_Gongming_White_Cloud_Temple_Beijing.jpg/300px-Zhao_Gongming_White_Cloud_Temple_Beijing.jpg",
+            baogao: "志心皈命禮。\n高上神霄，玉府大都督。\n五方巡察使，九州社令都大提點。\n掌定龍虎玄壇，金輪如意執法。\n黑面丹心，驅雷役電。\n正一玄壇，趙公明元帥。\n玄化財神天尊。",
+            desc: "【武財神】統領「招寶、納珍、招財、利市」四神。掌管世間財源，是民間最普遍供奉的武財神，護法同時帶來財運。"
         },
         {
             name: "關聖帝君",
-            image: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/07/Guan_Yu_statue.jpg/300px-Guan_Yu_statue.jpg", 
-            baogao: "志心皈命禮。<br>太上神威，英文雄武。<br>精忠大義，高節清廉。<br>運協皇圖，德崇演正。<br>掌儒釋道教之權，管天地人才之柄。<br>上司三十六天星辰雲漢，下轄七十二地土壘幽丰。<br>秉注生功德，延壽丹書；<br>執定死罪過，奪命黑籍。<br>考察諸佛諸神，監制群仙群職。<br>高證妙果，無量度人。<br>萬靈萬神，至上至尊。<br>伏魔大帝，關聖帝君。",
-            desc: "關聖帝君，原名關羽，字雲長。是忠義的象徵，被道教尊為「協天大帝」、「伏魔大帝」、「翊漢天尊」。<br><br>祂不僅是武神，也被視為武財神及儒家文化的守護神，職掌十分廣泛，包括治病除災、驅邪辟惡等。"
+            image: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/07/Guan_Yu_statue.jpg/300px-Guan_Yu_statue.jpg",
+            baogao: "志心皈命禮。\n太上神威，英文雄武。\n精忠大義，高節清廉。\n運協皇圖，德崇演正。\n掌儒釋道教之權，管天地人才之柄。\n萬靈萬神，至上至尊。\n伏魔大帝，關聖帝君。",
+            desc: "【協天伏魔】三教共尊的「武聖」。集忠、義、仁、勇於一身。職能極廣，包括驅魔、招財、治病、科考保佑等。"
+        },
+         {
+            name: "哪吒三太子 (中壇元帥)",
+            image: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7a/Nezha_Statue.jpg/300px-Nezha_Statue.jpg",
+            baogao: "志心皈命禮。\n興周聖將，滅紂前鋒。\n金光洞裏施法力，玉虛宮中修真性。\n騰雲駕霧，喚雨呼風。\n力降諸魔，收伏羣怪。\n變化多端，神威大顯。\n中壇元帥，太子元君。",
+            desc: "【五營主帥】統帥五營神兵神將，武藝高強，法力無邊。是道教重要的護法神，也是兒童的守護神。"
+        },
+        // --- 八仙與著名仙真 ---
+        {
+            name: "呂洞賓祖師 (純陽帝君)",
+            image: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bd/L%C3%BC_Dongbin_White_Cloud_Temple_Beijing.jpg/300px-L%C3%BC_Dongbin_White_Cloud_Temple_Beijing.jpg",
+            baogao: "志心皈命禮。\n玉清內相，金闕選仙。\n化身為三教之師，掌法判五雷之令。\n黃梁夢覺，忘世上之功名。\n寶劍光輝，掃人間之妖怪。\n大悲大願，大聖大慈。\n開山啟教，靈應祖師。\n天雷上相，純陽演正警化孚佑帝君。",
+            desc: "【八仙之首】全真道祖師。號純陽子，劍術高超，樂善好施，常雲遊人間濟世度人，民間傳說極多。"
         },
         {
-            name: "太上老君",
-            image: "", // 無圖片範例
-            baogao: "志心皈命禮。<br>隨方設教，歷劫度人。<br>為皇者師，帝者師，王者師，假名易號。<br>立天之道，地之道，人之道，隱聖顯凡。<br>總千二百之官君，包萬億重之梵炁。<br>太上老君，道德天尊。",
-            desc: "太上老君，即「道德天尊」，三清之一。道教創始者，公認為道教教祖。<br><br>祂是「道」的化身，著有《道德經》五千言，傳世教化。"
+            name: "八仙群真",
+            image: "", // 暫用預設圖
+            baogao: "(總誥) 志心皈命禮。\n紫微帝闕，瑤池皆通。\n名標仙籍，位列碧霄。\n鐵拐李祖，鍾離祖師，呂祖洞賓，張祖果老，何祖仙姑，藍祖采和，韓祖湘子，曹祖國舅。\n八仙有慶，同處在世。\n大悲大願，大聖大慈。\n八大仙祖，無量度人。",
+            desc: "【逍遙神仙】包括鐵拐李、漢鍾離、呂洞賓、張果老、何仙姑、藍采和、韓湘子、曹國舅。象徵男女老幼、富貴貧賤皆可得道成仙。"
+        },
+        {
+            name: "張道陵天師 (正一真人)",
+            image: "", 
+            baogao: "志心皈命禮。\n本來南土，上溯蜀都。\n先獲黃帝九鼎之丹書，後事老君兩度于玉局。\n千軸得修真之要，一時成吐納之功。\n法籙全成，受盟威品而結璘訣。\n正一真人，三天扶教，大法天師。\n雷霆都省，泰玄上相，都天大法主。\n正一靜應顯佑真君，六合無窮高明大帝，降魔護道天尊。",
+            desc: "【道教創始人】東漢末年創立五斗米道（正一道），尊老子為教祖。被尊為「祖天師」，其後代世襲天師之位。"
+        },
+        // --- 民間常拜神祇 ---
+        {
+            name: "慈航真人 (觀音大士)",
+            image: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Guanyin_Statue_Nanshan.jpg/300px-Guanyin_Statue_Nanshan.jpg",
+            baogao: "志心皈命禮。\n莊王毓秀，受帝命而誕生；\n教闡南洋，奉敕旨而救劫。\n尋聲感應，動念垂慈。\n聖德昭彰，玄功莫測。\n大悲大願，大聖大慈。\n尋聲救苦救難，慈航普度天尊。",
+            desc: "【慈悲普度】即民間信仰之觀音菩薩。道教尊為「慈航普度天尊」。慈悲為懷，聞聲救苦，家家戶戶虔誠供奉。"
+        },
+        {
+            name: "天上聖母 (媽祖)",
+            image: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/Matsu_statue_in_Tainan_Grand_Matsu_Temple.jpg/300px-Matsu_statue_in_Tainan_Grand_Matsu_Temple.jpg",
+            baogao: "志心皈命禮。\n普陀勝境，興化湄州。\n聖德丕應，威靈遠震。\n受金人之傳授，通玉女之靈機。\n恩被蒼生，德覃海宇。\n大悲大願，大聖大慈。\n天后元君，天上聖母。",
+            desc: "【海神天后】原名林默娘。護佑航海平安，是沿海地區最重要的信仰，後發展為全能的守護神。"
+        },
+        {
+            name: "文昌帝君",
+            image: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Wenchang_Wang_White_Cloud_Temple_Beijing.jpg/300px-Wenchang_Wang_White_Cloud_Temple_Beijing.jpg",
+            baogao: "志心皈命禮。\n不驕帝境，玉真慶宮。\n現九十八化之行藏，顯億千萬種之神異。\n飛鸞開化於在在，如意救劫以生生。\n至孝至仁，至聖至神。\n參元達化，更生永命天尊。",
+            desc: "【文運之神】掌管士人功名祿位。學子考試必拜，祈求金榜題名、智慧開竅。"
+        },
+        {
+            name: "福德正神 (土地公)",
+            image: "", 
+            baogao: "志心皈命禮。\n一方土穀，萬姓福神。\n秉忠正烈，助國衛民。\n膺承簡命，鎮一方而黎庶仰瞻。\n司職功曹，掌傳達而丹忱上達。\n義貫九天，堅貞一念。\n護國佑民，大喜大捨。\n福德正神，太上加封，土穀尊神。",
+            desc: "【地方守護】最基層的神明，掌管一方土地與農作，也是地方的財神與守護者，和藹可親。"
+        },
+         {
+            name: "城隍爺",
+            image: "", 
+            baogao: "志心皈命禮。\n社稷古神，兼管陰陽。\n察民間之善惡，理幽冥之禍福。\n賞善罰惡，報應昭昭。\n燮理陰陽，權衡生死。\n大悲大願，大聖大慈。\n威靈顯應，城隍尊神。",
+            desc: "【陰陽總管】城市的守護神，兼管陰陽兩界，職掌紀錄轄區內人民的善惡功過，審判亡魂。"
+        },
+        {
+            name: "月下老人",
+            image: "",
+            baogao: "志心皈命禮。\n團圓月下，相思樹底。\n定生民之姻緣，繫天下之紅線。\n配偶得成，冤家債主。\n化解化解，前生註定。\n大悲大願，大聖大慈。\n月下老人，合婚聯姻天尊。",
+            desc: "【掌管姻緣】手執紅線，專門掌管男女姻緣的神仙。祈求良緣者必拜。"
+        },
+        {
+            name: "註生娘娘",
+            image: "",
+            baogao: "志心皈命禮。\n斗口靈官，掌管註生。\n注定胎孕，保佑產難。\n送子送孫，衍傳宗社。\n大悲大願，大聖大慈。\n註生娘娘，衛房聖母元君。",
+            desc: "【掌管生育】主宰婦女懷孕、生產與幼兒健康的神靈。求子或祈求生產順利者虔誠供奉。"
         }
+        // 您可以在此繼續添加更多神仙...
     ];
 
-    // --- 2. 程式邏輯區 ---
+    // --- 程式邏輯區 ---
 
     const grid = document.getElementById('deityGrid');
     const searchInput = document.getElementById('searchInput');
     const modal = document.getElementById('deityModal');
     const closeBtn = document.getElementsByClassName("close")[0];
+    const modalImage = document.getElementById('modalImage');
 
     // 渲染卡片函數
     function renderCards(data) {
         grid.innerHTML = ''; // 清空現有內容
+        if (data.length === 0) {
+            grid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; font-size: 1.2rem; color: #888;">找不到符合條件的神仙。</p>';
+            return;
+        }
+
         data.forEach(item => {
             const card = document.createElement('div');
             card.className = 'card';
             
-            // 處理圖片，如果沒有圖片連結則顯示灰色佔位
-            let imgHTML = '';
-            if(item.image) {
-                imgHTML = `<img src="${item.image}" alt="${item.name}">`;
-            } else {
-                imgHTML = `<div class="placeholder-text">暫無圖片</div>`;
-            }
+            const imageUrl = item.image || FALLBACK_IMAGE;
 
             card.innerHTML = `
-                ${imgHTML}
+                <div class="img-container">
+                    <img src="${imageUrl}" alt="${item.name}" loading="lazy">
+                </div>
                 <h3>${item.name}</h3>
             `;
             
+            // 為卡片中的圖片添加錯誤處理
+            const img = card.querySelector('img');
+            img.onerror = function() {
+                this.onerror = null; // 防止無限循環
+                this.src = FALLBACK_IMAGE;
+                this.classList.add('error-fallback'); // 添加一個類別以便設定特定樣式
+                this.alt = "暫無圖片";
+            };
+
             // 點擊事件
             card.addEventListener('click', () => openModal(item));
             grid.appendChild(card);
@@ -288,39 +536,53 @@
     // 開啟彈出視窗
     function openModal(item) {
         document.getElementById('modalTitle').innerText = item.name;
-        document.getElementById('modalBaogao').innerHTML = item.baogao || "暫無寶誥";
-        document.getElementById('modalDesc').innerHTML = item.desc || "暫無介紹";
+        // 處理寶誥的換行，將 \n 轉換為 <br>
+        document.getElementById('modalBaogao').innerHTML = (item.baogao || "暫無寶誥紀錄").replace(/\n/g, '<br>');
+        document.getElementById('modalDesc').innerHTML = item.desc || "暫無詳細介紹";
         
-        const imgEl = document.getElementById('modalImage');
-        if(item.image) {
-            imgEl.src = item.image;
-            imgEl.style.display = 'inline-block';
-        } else {
-            imgEl.style.display = 'none';
-        }
+        // 處理彈出視窗的圖片
+        modalImage.src = item.image || FALLBACK_IMAGE;
+        // 同樣為彈出視窗的圖片添加錯誤處理
+        modalImage.onerror = function() {
+             this.onerror = null;
+             this.src = FALLBACK_IMAGE;
+        };
 
         modal.style.display = "block";
+        // 禁止背景滾動
+        document.body.style.overflow = 'hidden';
     }
 
     // 關閉彈出視窗
-    closeBtn.onclick = function() {
+    function closeModal() {
         modal.style.display = "none";
+        // 恢復背景滾動
+        document.body.style.overflow = 'auto';
     }
+
+    closeBtn.onclick = closeModal;
     
     // 點擊視窗外部也可關閉
     window.onclick = function(event) {
         if (event.target == modal) {
-            modal.style.display = "none";
+            closeModal();
         }
     }
 
-    // 搜尋過濾功能
+    // 搜尋過濾功能 (支援多關鍵字，用空格分開)
     searchInput.addEventListener('input', (e) => {
-        const keyword = e.target.value.toLowerCase();
-        const filteredData = deities.filter(item => 
-            item.name.toLowerCase().includes(keyword) || 
-            item.desc.toLowerCase().includes(keyword)
-        );
+        const searchTerms = e.target.value.toLowerCase().split(' ').filter(term => term.length > 0);
+        
+        let filteredData = deities;
+        
+        if (searchTerms.length > 0) {
+            filteredData = deities.filter(item => {
+                const contentToSearch = (item.name + item.desc + item.baogao).toLowerCase();
+                // 檢查是否所有關鍵字都存在於內容中
+                return searchTerms.every(term => contentToSearch.includes(term));
+            });
+        }
+        
         renderCards(filteredData);
     });
 
