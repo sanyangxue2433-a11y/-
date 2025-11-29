@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>債務還款規劃助手 v2.0</title>
+    <style>
+        body { font-family: "Microsoft JhengHei", sans-serif; background-color: #f4f4f9; display: flex; justify-content: center; padding: 20px; line-height: 1.6; }
+        .container { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); max-width: 800px; width: 100%; }
+        h2 { text-align: center; color: #333; margin-bottom: 20px; }
+        
+        /* 輸入區域樣式 */
+        .input-section { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; margin-bottom: 20px; }
+        .form-group { margin-bottom: 10px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; color: #555; font-size: 14px; }
+        input { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; font-size: 16px; }
+        
+        button { width: 100%; padding: 12px; background-color: #007bff; color: white; border: none; border-radius: 6px; font-size: 16px; cursor: pointer; transition: 0.3s; margin-top: 10px; }
+        button:hover { background-color: #0056b3; }
+        button.export-btn { background-color: #28a745; margin-top: 10px; display: none; }
+        button.export-btn:hover { background-color: #218838; }
+
+        /* 結果顯示區域 */
+        .result-box { margin-top: 25px; padding: 20px; background-color: #e9ecef; border-radius: 8px; display: none; }
+        .summary-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
+        .result-item { font-size: 16px; }
+        .highlight { font-weight: bold; color: #d9534f; }
+        .big-text { font-size: 1.2em; color: #333; font-weight: bold; }
+
+        /* 視覺條 */
+        .progress-container { width: 100%; background-color: #ddd; border-radius: 10px; margin: 15px 0; height: 25px; position: relative; overflow: hidden; display: flex; }
+        .bar-principal { background-color: #17a2b8; height: 100%; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px; }
+        .bar-interest { background-color: #dc3545; height: 100%; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px; }
+
+        /* 表格樣式 */
+        .table-responsive { overflow-x: auto; margin-top: 20px; border-top: 2px solid #ddd; padding-top: 10px; }
+        table { width: 100%; border-collapse: collapse; min-width: 500px; }
+        th, td { padding: 10px; text-align: left; border-bottom: 1px solid #ddd; }
+        th { background-color: #f8f9fa; color: #333; }
+        tr:nth-child(even) { background-color: #f9f9f9; }
+
+        @media (max-width: 600px) {
+            .input-section { grid-template-columns: 1fr; }
+            .summary-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>💰 債務還款規劃助手 v2.0</h2>
+    
+    <div class="input-section">
+        <div class="form-group">
+            <label>總欠款 (HKD)</label>
+            <input type="number" id="totalDebt" placeholder="100000">
+        </div>
+        <div class="form-group">
+            <label>年利率 (%)</label>
+            <input type="number" id="interestRate" placeholder="5.5" step="0.01">
+        </div>
+        <div class="form-group">
+            <label>每月還款 (HKD)</label>
+            <input type="number" id="monthlyPayment" placeholder="5000">
+        </div>
+    </div>
+
+    <button onclick="calculateDebt()">開始計算</button>
+    <button id="exportBtn" class="export-btn" onclick="exportToCSV()">📥 下載還款計劃表 (Excel/CSV)</button>
+
+    <div id="resultBox" class="result-box">
+        <div class="summary-grid">
+            <div class="result-item">還清時間：<span id="timeResult" class="highlight big-text">--</span></div>
+            <div class="result-item">預計日期：<span id="dateResult">--</span></div>
+            <div class="result-item">總本金：<span id="principalShow">--</span></div>
+            <div class="result-item">總利息：<span id="interestShow" class="highlight">--</span></div>
+            <div class="result-item" style="grid-column: 1 / -1;">連本帶利總支出：<span id="totalPaidShow" class="big-text">--</span></div>
+        </div>
+
+        <p style="margin-bottom: 5px; font-size: 14px; font-weight: bold;">支出結構分析：</p>
+        <div class="progress-container">
+            <div id="barPrincipal" class="bar-principal" style="width: 70%">本金</div>
+            <div id="barInterest" class="bar-interest" style="width: 30%">利息</div>
+        </div>
+
+        <div class="table-responsive">
+            <h3>每月還款詳細表</h3>
+            <table id="detailsTable">
+                <thead>
+                    <tr>
+                        <th>期數</th>
+                        <th>還款額</th>
+                        <th>償還利息</th>
+                        <th>償還本金</th>
+                        <th>剩餘欠款</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    let scheduleData = []; // 用於存儲數據以便下載
+
+    window.onload = function() {
+        if(localStorage.getItem('totalDebt')) document.getElementById('totalDebt').value = localStorage.getItem('totalDebt');
+        if(localStorage.getItem('interestRate')) document.getElementById('interestRate').value = localStorage.getItem('interestRate');
+        if(localStorage.getItem('monthlyPayment')) document.getElementById('monthlyPayment').value = localStorage.getItem('monthlyPayment');
+    }
+
+    function calculateDebt() {
+        let principal = parseFloat(document.getElementById('totalDebt').value);
+        let rate = parseFloat(document.getElementById('interestRate').value);
+        let payment = parseFloat(document.getElementById('monthlyPayment').value);
+
+        if (isNaN(principal) || isNaN(rate) || isNaN(payment) || principal <= 0 || payment <= 0) {
+            alert("請輸入正確的數字");
+            return;
+        }
+
+        localStorage.setItem('totalDebt', principal);
+        localStorage.setItem('interestRate', rate);
+        localStorage.setItem('monthlyPayment', payment);
+
+        let monthlyRate = rate / 100 / 12;
+        let balance = principal;
+        
+        if (balance * monthlyRate >= payment) {
+            alert("⚠️ 警告：還款額低於利息，永遠還不完！請增加還款金額。");
+            return;
+        }
+
+        scheduleData = []; // 清空舊數據
+        let totalInterest = 0;
+        let months = 0;
+        let tbody = document.querySelector("#detailsTable tbody");
+        tbody.innerHTML = ""; // 清空表格
+
+        while (balance > 0 && months < 600) {
+            months++;
+            let interestForMonth = balance * monthlyRate;
+            let principalForMonth = payment - interestForMonth;
+
+            // 最後一期處理
+            if (balance < principalForMonth) {
+                principalForMonth = balance;
+                payment = balance + interestForMonth; // 最後一個月只需還剩下的
+            }
+
+            balance -= principalForMonth;
+            totalInterest += interestForMonth;
+            if (balance < 0.01) balance = 0;
+
+            // 存入數據
+            scheduleData.push({
+                month: months,
+                payment: payment.toFixed(2),
+                interest: interestForMonth.toFixed(2),
+                principal: principalForMonth.toFixed(2),
+                balance: balance.toFixed(2)
+            });
+
+            // 添加表格行
+            let row = `<tr>
+                <td>第 ${months} 期</td>
+                <td>$${payment.toFixed(2)}</td>
+                <td style="color: #dc3545;">$${interestForMonth.toFixed(2)}</td>
+                <td style="color: #17a2b8;">$${principalForMonth.toFixed(2)}</td>
+                <td>$${balance.toFixed(2)}</td>
+            </tr>`;
+            tbody.innerHTML += row;
+        }
+
+        // 顯示結果摘要
+        let years = Math.floor(months / 12);
+        let remainingMonths = months % 12;
+        let timeString = (years > 0 ? years + " 年 " : "") + (remainingMonths > 0 ? remainingMonths + " 個月" : "");
+        
+        let today = new Date();
+        today.setMonth(today.getMonth() + months);
+        let finishDate = today.getFullYear() + "年" + (today.getMonth() + 1) + "月";
+
+        document.getElementById('timeResult').innerText = timeString;
+        document.getElementById('dateResult').innerText = finishDate;
+        document.getElementById('principalShow').innerText = "$" + principal.toFixed(2);
+        document.getElementById('interestShow').innerText = "$" + totalInterest.toFixed(2);
+        
+        let totalPaid = principal + totalInterest;
+        document.getElementById('totalPaidShow').innerText = "$" + totalPaid.toFixed(2);
+
+        // 更新視覺條
+        let interestPercent = (totalInterest / totalPaid) * 100;
+        let principalPercent = 100 - interestPercent;
+        
+        document.getElementById('barPrincipal').style.width = principalPercent + "%";
+        document.getElementById('barPrincipal').innerText = "本金 " + Math.round(principalPercent) + "%";
+        
+        document.getElementById('barInterest').style.width = interestPercent + "%";
+        document.getElementById('barInterest').innerText = "利息 " + Math.round(interestPercent) + "%";
+
+        document.getElementById('resultBox').style.display = "block";
+        document.getElementById('exportBtn').style.display = "block";
+    }
+
+    function exportToCSV() {
+        if (scheduleData.length === 0) {
+            alert("請先進行計算");
+            return;
+        }
+
+        let csvContent = "\uFEFF"; // 加入 BOM 防止中文亂碼
+        csvContent += "期數,還款額,償還利息,償還本金,剩餘欠款\n";
+
+        scheduleData.forEach(function(row) {
+            csvContent += `${row.month},${row.payment},${row.interest},${row.principal},${row.balance}\n`;
+        });
+
+        let blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+        let link = document.createElement("a");
+        let url = URL.createObjectURL(blob);
+        link.setAttribute("href", url);
+        link.setAttribute("download", "還款計劃表.csv");
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+</script>
+
+</body>
+</html>
