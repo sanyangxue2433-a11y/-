@@ -3,96 +3,109 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>78張塔羅牌義查詢 (連線版)</title>
+    <title>78張塔羅牌義查詢 (圖文版)</title>
     <style>
         :root {
             --primary: #2c3e50;
-            --accent: #8e44ad;
-            --bg: #f4f7f6;
+            --accent: #6c5ce7;
+            --bg: #dfe6e9;
             --card-bg: #fff;
         }
 
         body { font-family: "Microsoft JhengHei", sans-serif; background: var(--bg); margin: 0; padding: 20px; color: #333; }
         
-        /* 標題與控制區 */
         header { text-align: center; margin-bottom: 30px; }
+        h1 { color: var(--primary); margin-bottom: 5px; }
+        p { color: #636e72; }
+
         .controls { max-width: 800px; margin: 0 auto 30px; text-align: center; }
         
         input {
-            width: 100%; padding: 15px; border: 2px solid #ddd; border-radius: 30px; 
+            width: 100%; padding: 15px; border: 2px solid #b2bec3; border-radius: 30px; 
             font-size: 16px; outline: none; box-sizing: border-box; margin-bottom: 15px;
             transition: 0.3s;
         }
-        input:focus { border-color: var(--accent); box-shadow: 0 0 8px rgba(142,68,173,0.2); }
+        input:focus { border-color: var(--accent); box-shadow: 0 0 10px rgba(108, 92, 231, 0.2); }
 
         .filter-buttons { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
         .filter-btn {
-            background: #fff; border: 1px solid #ccc; padding: 8px 16px; 
-            border-radius: 20px; cursor: pointer; transition: 0.2s; font-weight: bold; color: #555;
+            background: #fff; border: 1px solid #b2bec3; padding: 8px 16px; 
+            border-radius: 20px; cursor: pointer; transition: 0.2s; font-weight: bold; color: #636e72;
         }
         .filter-btn:hover, .filter-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
 
-        /* 網格佈局 */
         .grid {
-            display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); 
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); 
             gap: 25px; max-width: 1200px; margin: 0 auto;
         }
 
-        /* 卡片設計 */
         .card {
             background: var(--card-bg); border-radius: 15px; overflow: hidden;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05); transition: transform 0.2s; position: relative;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1); transition: transform 0.2s;
+            display: flex; flex-direction: column;
         }
-        .card:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+        .card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.15); }
         
-        /* 圖片區域 */
         .img-container {
-            width: 100%; height: 200px; background: #eee;
-            position: relative; overflow: hidden;
+            width: 100%;
+            /* 設定圖片容器高度，確保整齊 */
+            height: 350px; 
+            background: #f1f2f6;
+            position: relative;
+            overflow: hidden;
         }
+        
         .card-img {
-            width: 100%; height: 100%; object-fit: cover;
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* 讓圖片填滿容器 */
+            object-position: top center; /* 讓圖片重點偏上方顯示 */
             transition: transform 0.5s;
         }
+        
         .card:hover .card-img { transform: scale(1.05); }
 
-        /* 元素標籤 */
         .badge {
             position: absolute; top: 10px; right: 10px; 
             color: white; padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: bold;
             box-shadow: 0 2px 4px rgba(0,0,0,0.3); z-index: 2;
+            backdrop-filter: blur(5px);
         }
         
-        /* 元素顏色定義 */
-        .major { background: #8e44ad; } /* 紫 */
-        .fire { background: #e74c3c; }  /* 紅 */
-        .water { background: #3498db; } /* 藍 */
-        .air { background: #f1c40f; color: #333 !important; } /* 黃 */
-        .earth { background: #27ae60; } /* 綠 */
+        .major { background: rgba(142, 68, 173, 0.9); } 
+        .fire { background: rgba(231, 76, 60, 0.9); }  
+        .water { background: rgba(52, 152, 219, 0.9); } 
+        .air { background: rgba(241, 196, 15, 0.9); color: #333 !important; } 
+        .earth { background: rgba(39, 174, 96, 0.9); } 
 
-        /* 內容區域 */
-        .content { padding: 20px; }
-        h3 { margin: 0 0 12px; color: var(--primary); border-bottom: 2px solid #f0f0f0; padding-bottom: 8px; }
+        .content { padding: 15px; flex-grow: 1; display: flex; flex-direction: column; }
+        h3 { margin: 0 0 10px; color: var(--primary); font-size: 1.2em; border-bottom: 2px solid #f0f0f0; padding-bottom: 8px; }
         
-        .meaning { margin-bottom: 12px; font-size: 0.95em; line-height: 1.5; }
-        .label { font-weight: bold; display: block; margin-bottom: 3px; }
+        .meaning { margin-bottom: 8px; font-size: 0.9em; line-height: 1.5; color: #2d3436; }
+        .label { font-weight: bold; display: inline-block; margin-right: 5px; }
         .up { color: #27ae60; }
         .rev { color: #c0392b; }
-        .highlight { background: #fff3cd; padding: 0 2px; }
+        .highlight { background: #ffeaa7; padding: 0 2px; }
+
+        /* 手機版優化 */
+        @media (max-width: 600px) {
+            .grid { grid-template-columns: 1fr; }
+            .img-container { height: 400px; } /* 手機上圖片大一點比較好看 */
+        }
 
     </style>
 </head>
 <body>
 
 <header>
-    <h1>🔮 塔羅牌義資料庫 (連線版)</h1>
-    <p>需連接網路以顯示圖片</p>
+    <h1>🔮 塔羅牌義資料庫</h1>
+    <p>經典萊德偉特塔羅牌 (Rider-Waite)</p>
 </header>
 
 <div class="controls">
-    <input type="text" id="searchInput" placeholder="輸入關鍵字搜尋 (例如：愚者、愛情、金錢...)">
+    <input type="text" id="searchInput" placeholder="輸入關鍵字 (例如：愛情、錢、寶劍...)">
     <div class="filter-buttons">
-        <button class="filter-btn active" onclick="filter('all', this)">全部顯示</button>
+        <button class="filter-btn active" onclick="filter('all', this)">全部</button>
         <button class="filter-btn" onclick="filter('major', this)">大阿爾克那</button>
         <button class="filter-btn" onclick="filter('fire', this)">權杖 (火)</button>
         <button class="filter-btn" onclick="filter('water', this)">聖杯 (水)</button>
@@ -104,95 +117,99 @@
 <div id="grid" class="grid"></div>
 
 <script>
-    // 資料縮寫說明: n=name, e=element, u=upright, r=reversed
+    // 圖片來源基礎網址 (使用 sacred-texts 的公開資源，因為它們命名最有規律)
+    const imgBaseUrl = "https://www.sacred-texts.com/tarot/pkt/img/";
+
+    // 為了對應圖片檔名，我們增加 'code' 欄位
+    // 命名規則：ar=大牌, wa=權杖, cu=聖杯, sw=寶劍, pe=錢幣
     const cards = [
-        // --- 大阿爾克那 ---
-        {n:"0. 愚者 (The Fool)", e:"major", u:"新的開始、冒險、天真、潛力", r:"魯莽、冒險過度、愚蠢"},
-        {n:"I. 魔術師 (The Magician)", e:"major", u:"創造力、技能、意志力、顯化", r:"欺騙、操縱、才華被埋沒"},
-        {n:"II. 女祭司 (High Priestess)", e:"major", u:"直覺、神秘、潛意識、內在智慧", r:"壓抑直覺、膚淺、隱藏敵人"},
-        {n:"III. 皇后 (The Empress)", e:"major", u:"豐盛、母性、自然、感官享受", r:"依賴、創造力受阻、過度保護"},
-        {n:"IV. 皇帝 (The Emperor)", e:"major", u:"權威、結構、控制、父親形象", r:"暴政、僵化、濫用權力"},
-        {n:"V. 教皇 (The Hierophant)", e:"major", u:"傳統、信仰、宗教、團體", r:"挑戰傳統、標新立異、受限"},
-        {n:"VI. 戀人 (The Lovers)", e:"major", u:"愛、和諧、關係、選擇、結合", r:"不和諧、失衡、錯誤選擇"},
-        {n:"VII. 戰車 (The Chariot)", e:"major", u:"勝利、意志力、自律、決心", r:"失控、失敗、缺乏方向"},
-        {n:"VIII. 力量 (Strength)", e:"major", u:"內在力量、勇氣、耐心、同情", r:"自我懷疑、軟弱、恐懼"},
-        {n:"IX. 隱士 (The Hermit)", e:"major", u:"內省、孤獨、尋求真理、指導", r:"孤立、寂寞、退縮、迷失"},
-        {n:"X. 命運之輪 (Wheel of Fortune)", e:"major", u:"好運、業力、生命週期、機會", r:"厄運、抵抗變化、惡性循環"},
-        {n:"XI. 正義 (Justice)", e:"major", u:"公正、真理、因果、法律", r:"不公、偏見、不誠實"},
-        {n:"XII. 吊人 (Hanged Man)", e:"major", u:"犧牲、新視角、暫停、等待", r:"無謂犧牲、停滯、拖延"},
-        {n:"XIII. 死神 (Death)", e:"major", u:"結束、轉變、重生、斷捨離", r:"抗拒改變、停滯、無法釋懷"},
-        {n:"XIV. 節制 (Temperance)", e:"major", u:"平衡、適度、耐心、和諧", r:"失衡、過度、缺乏耐心"},
-        {n:"XV. 惡魔 (The Devil)", e:"major", u:"束縛、成癮、物質主義、性慾", r:"打破束縛、重獲自由、覺醒"},
-        {n:"XVI. 高塔 (The Tower)", e:"major", u:"突變、災難、啟示、混亂", r:"避免災難、延遲改變、重建"},
-        {n:"XVII. 星星 (The Star)", e:"major", u:"希望、靈感、平靜、療癒", r:"絕望、缺乏信心、錯失機會"},
-        {n:"XVIII. 月亮 (The Moon)", e:"major", u:"幻覺、恐懼、潛意識、不安", r:"混亂澄清、釋放恐懼、揭露"},
-        {n:"XIX. 太陽 (The Sun)", e:"major", u:"快樂、成功、活力、溫暖", r:"暫時挫折、過度樂觀、虛榮"},
-        {n:"XX. 審判 (Judgement)", e:"major", u:"重生、召喚、覺醒、因果", r:"自我懷疑、拒絕召喚、後悔"},
-        {n:"XXI. 世界 (The World)", e:"major", u:"完成、整合、成就、圓滿", r:"未完成、缺乏收尾、延遲"},
+        // --- 大阿爾克那 (ar00 - ar21) ---
+        {c:"ar00", n:"0. 愚者 (The Fool)", e:"major", u:"新的開始、冒險、天真、潛力", r:"魯莽、冒險過度、愚蠢"},
+        {c:"ar01", n:"I. 魔術師 (The Magician)", e:"major", u:"創造力、技能、意志力、顯化", r:"欺騙、操縱、才華被埋沒"},
+        {c:"ar02", n:"II. 女祭司 (High Priestess)", e:"major", u:"直覺、神秘、潛意識、內在智慧", r:"壓抑直覺、膚淺、隱藏敵人"},
+        {c:"ar03", n:"III. 皇后 (The Empress)", e:"major", u:"豐盛、母性、自然、感官享受", r:"依賴、創造力受阻、過度保護"},
+        {c:"ar04", n:"IV. 皇帝 (The Emperor)", e:"major", u:"權威、結構、控制、父親形象", r:"暴政、僵化、濫用權力"},
+        {c:"ar05", n:"V. 教皇 (The Hierophant)", e:"major", u:"傳統、信仰、宗教、團體", r:"挑戰傳統、標新立異、受限"},
+        {c:"ar06", n:"VI. 戀人 (The Lovers)", e:"major", u:"愛、和諧、關係、選擇、結合", r:"不和諧、失衡、錯誤選擇"},
+        {c:"ar07", n:"VII. 戰車 (The Chariot)", e:"major", u:"勝利、意志力、自律、決心", r:"失控、失敗、缺乏方向"},
+        {c:"ar08", n:"VIII. 力量 (Strength)", e:"major", u:"內在力量、勇氣、耐心、同情", r:"自我懷疑、軟弱、恐懼"},
+        {c:"ar09", n:"IX. 隱士 (The Hermit)", e:"major", u:"內省、孤獨、尋求真理、指導", r:"孤立、寂寞、退縮、迷失"},
+        {c:"ar10", n:"X. 命運之輪 (Wheel of Fortune)", e:"major", u:"好運、業力、生命週期、機會", r:"厄運、抵抗變化、惡性循環"},
+        {c:"ar11", n:"XI. 正義 (Justice)", e:"major", u:"公正、真理、因果、法律", r:"不公、偏見、不誠實"},
+        {c:"ar12", n:"XII. 吊人 (Hanged Man)", e:"major", u:"犧牲、新視角、暫停、等待", r:"無謂犧牲、停滯、拖延"},
+        {c:"ar13", n:"XIII. 死神 (Death)", e:"major", u:"結束、轉變、重生、斷捨離", r:"抗拒改變、停滯、無法釋懷"},
+        {c:"ar14", n:"XIV. 節制 (Temperance)", e:"major", u:"平衡、適度、耐心、和諧", r:"失衡、過度、缺乏耐心"},
+        {c:"ar15", n:"XV. 惡魔 (The Devil)", e:"major", u:"束縛、成癮、物質主義、性慾", r:"打破束縛、重獲自由、覺醒"},
+        {c:"ar16", n:"XVI. 高塔 (The Tower)", e:"major", u:"突變、災難、啟示、混亂", r:"避免災難、延遲改變、重建"},
+        {c:"ar17", n:"XVII. 星星 (The Star)", e:"major", u:"希望、靈感、平靜、療癒", r:"絕望、缺乏信心、錯失機會"},
+        {c:"ar18", n:"XVIII. 月亮 (The Moon)", e:"major", u:"幻覺、恐懼、潛意識、不安", r:"混亂澄清、釋放恐懼、揭露"},
+        {c:"ar19", n:"XIX. 太陽 (The Sun)", e:"major", u:"快樂、成功、活力、溫暖", r:"暫時挫折、過度樂觀、虛榮"},
+        {c:"ar20", n:"XX. 審判 (Judgement)", e:"major", u:"重生、召喚、覺醒、因果", r:"自我懷疑、拒絕召喚、後悔"},
+        {c:"ar21", n:"XXI. 世界 (The World)", e:"major", u:"完成、整合、成就、圓滿", r:"未完成、缺乏收尾、延遲"},
 
-        // --- 權杖 (火) ---
-        {n:"權杖王牌 (Ace of Wands)", e:"fire", u:"靈感、新機會、成長、熱情", r:"延遲、缺乏動力、錯失機會"},
-        {n:"權杖二 (Two of Wands)", e:"fire", u:"計畫、未來展望、決定、發現", r:"恐懼未知、缺乏計畫、猶豫"},
-        {n:"權杖三 (Three of Wands)", e:"fire", u:"擴張、遠見、海外機會、進步", r:"障礙、延誤、挫折、退縮"},
-        {n:"權杖四 (Four of Wands)", e:"fire", u:"慶祝、和諧、歸屬感、穩定", r:"家庭衝突、過渡期、不穩定"},
-        {n:"權杖五 (Five of Wands)", e:"fire", u:"衝突、競爭、分歧、混亂", r:"避免衝突、達成共識"},
-        {n:"權杖六 (Six of Wands)", e:"fire", u:"勝利、認可、榮譽、自信", r:"失敗、名聲受損、驕傲自大"},
-        {n:"權杖七 (Seven of Wands)", e:"fire", u:"挑戰、堅持立場、防禦、毅力", r:"放棄、被壓倒、缺乏自信"},
-        {n:"權杖八 (Eight of Wands)", e:"fire", u:"迅速行動、消息、旅行、進展", r:"延遲、挫折、混亂、衝動"},
-        {n:"權杖九 (Nine of Wands)", e:"fire", u:"韌性、勇氣、堅持到底", r:"放棄、筋疲力盡、固執"},
-        {n:"權杖十 (Ten of Wands)", e:"fire", u:"負擔、責任、壓力、努力工作", r:"崩潰、無法承受、推卸責任"},
-        {n:"權杖侍者 (Page of Wands)", e:"fire", u:"探索、新消息、熱情、好奇心", r:"壞消息、缺乏方向、拖延"},
-        {n:"權杖騎士 (Knight of Wands)", e:"fire", u:"行動、冒險、衝動、精力充沛", r:"魯莽、憤怒、急躁、傲慢"},
-        {n:"權杖皇后 (Queen of Wands)", e:"fire", u:"自信、熱情、決心、社交魅力", r:"嫉妒、情緒化、控制欲"},
-        {n:"權杖國王 (King of Wands)", e:"fire", u:"領導力、遠見、大膽、企業家", r:"獨裁、衝動、無情"},
+        // --- 權杖 (wa) ---
+        {c:"waac", n:"權杖王牌 (Ace of Wands)", e:"fire", u:"靈感、新機會、成長、熱情", r:"延遲、缺乏動力、錯失機會"},
+        {c:"wa02", n:"權杖二 (Two of Wands)", e:"fire", u:"計畫、未來展望、決定、發現", r:"恐懼未知、缺乏計畫、猶豫"},
+        {c:"wa03", n:"權杖三 (Three of Wands)", e:"fire", u:"擴張、遠見、海外機會、進步", r:"障礙、延誤、挫折、退縮"},
+        {c:"wa04", n:"權杖四 (Four of Wands)", e:"fire", u:"慶祝、和諧、歸屬感、穩定", r:"家庭衝突、過渡期、不穩定"},
+        {c:"wa05", n:"權杖五 (Five of Wands)", e:"fire", u:"衝突、競爭、分歧、混亂", r:"避免衝突、達成共識"},
+        {c:"wa06", n:"權杖六 (Six of Wands)", e:"fire", u:"勝利、認可、榮譽、自信", r:"失敗、名聲受損、驕傲自大"},
+        {c:"wa07", n:"權杖七 (Seven of Wands)", e:"fire", u:"挑戰、堅持立場、防禦、毅力", r:"放棄、被壓倒、缺乏自信"},
+        {c:"wa08", n:"權杖八 (Eight of Wands)", e:"fire", u:"迅速行動、消息、旅行、進展", r:"延遲、挫折、混亂、衝動"},
+        {c:"wa09", n:"權杖九 (Nine of Wands)", e:"fire", u:"韌性、勇氣、堅持到底", r:"放棄、筋疲力盡、固執"},
+        {c:"wa10", n:"權杖十 (Ten of Wands)", e:"fire", u:"負擔、責任、壓力、努力工作", r:"崩潰、無法承受、推卸責任"},
+        {c:"wapa", n:"權杖侍者 (Page of Wands)", e:"fire", u:"探索、新消息、熱情、好奇心", r:"壞消息、缺乏方向、拖延"},
+        {c:"wakn", n:"權杖騎士 (Knight of Wands)", e:"fire", u:"行動、冒險、衝動、精力充沛", r:"魯莽、憤怒、急躁、傲慢"},
+        {c:"waqu", n:"權杖皇后 (Queen of Wands)", e:"fire", u:"自信、熱情、決心、社交魅力", r:"嫉妒、情緒化、控制欲"},
+        {c:"waki", n:"權杖國王 (King of Wands)", e:"fire", u:"領導力、遠見、大膽、企業家", r:"獨裁、衝動、無情"},
 
-        // --- 聖杯 (水) ---
-        {n:"聖杯王牌 (Ace of Cups)", e:"water", u:"新戀情、同情心、創造力", r:"情感壓抑、空虛、失戀"},
-        {n:"聖杯二 (Two of Cups)", e:"water", u:"伴侶關係、吸引力、合作", r:"不平衡、破裂、誤解"},
-        {n:"聖杯三 (Three of Cups)", e:"water", u:"慶祝、友誼、團體、合作", r:"過度放縱、八卦、孤立"},
-        {n:"聖杯四 (Four of Cups)", e:"water", u:"冷漠、沈思、錯失機會、厭倦", r:"抓住機會、覺醒、新的熱情"},
-        {n:"聖杯五 (Five of Cups)", e:"water", u:"失落、悲傷、後悔、失望", r:"接受、原諒、走出悲傷"},
-        {n:"聖杯六 (Six of Cups)", e:"water", u:"懷舊、童年回憶、純真、重逢", r:"沈溺過去、拒絕長大、遺忘"},
-        {n:"聖杯七 (Seven of Cups)", e:"water", u:"幻想、選擇、白日夢、混亂", r:"看清現實、做出選擇、清晰"},
-        {n:"聖杯八 (Eight of Cups)", e:"water", u:"離開、尋找真理、失望、旅行", r:"猶豫不決、恐懼改變"},
-        {n:"聖杯九 (Nine of Cups)", e:"water", u:"願望成真、滿足、快樂、享受", r:"貪婪、不滿、炫耀、放縱"},
-        {n:"聖杯十 (Ten of Cups)", e:"water", u:"家庭幸福、和諧、情感圓滿", r:"家庭失和、價值觀衝突"},
-        {n:"聖杯侍者 (Page of Cups)", e:"water", u:"新消息(情感)、直覺、創意", r:"情緒不穩、壞消息、幼稚"},
-        {n:"聖杯騎士 (Knight of Cups)", e:"water", u:"浪漫、求愛、魅力、想像力", r:"情緒化、欺騙、不切實際"},
-        {n:"聖杯皇后 (Queen of Cups)", e:"water", u:"慈悲、關懷、直覺、情感深度", r:"依賴、情緒勒索、多愁善感"},
-        {n:"聖杯國王 (King of Cups)", e:"water", u:"情緒平衡、寬容、外交、智慧", r:"冷漠、情緒操控、喜怒無常"},
+        // --- 聖杯 (cu) ---
+        {c:"cuac", n:"聖杯王牌 (Ace of Cups)", e:"water", u:"新戀情、同情心、創造力", r:"情感壓抑、空虛、失戀"},
+        {c:"cu02", n:"聖杯二 (Two of Cups)", e:"water", u:"伴侶關係、吸引力、合作", r:"不平衡、破裂、誤解"},
+        {c:"cu03", n:"聖杯三 (Three of Cups)", e:"water", u:"慶祝、友誼、團體、合作", r:"過度放縱、八卦、孤立"},
+        {c:"cu04", n:"聖杯四 (Four of Cups)", e:"water", u:"冷漠、沈思、錯失機會、厭倦", r:"抓住機會、覺醒、新的熱情"},
+        {c:"cu05", n:"聖杯五 (Five of Cups)", e:"water", u:"失落、悲傷、後悔、失望", r:"接受、原諒、走出悲傷"},
+        {c:"cu06", n:"聖杯六 (Six of Cups)", e:"water", u:"懷舊、童年回憶、純真、重逢", r:"沈溺過去、拒絕長大、遺忘"},
+        {c:"cu07", n:"聖杯七 (Seven of Cups)", e:"water", u:"幻想、選擇、白日夢、混亂", r:"看清現實、做出選擇、清晰"},
+        {c:"cu08", n:"聖杯八 (Eight of Cups)", e:"water", u:"離開、尋找真理、失望、旅行", r:"猶豫不決、恐懼改變"},
+        {c:"cu09", n:"聖杯九 (Nine of Cups)", e:"water", u:"願望成真、滿足、快樂、享受", r:"貪婪、不滿、炫耀、放縱"},
+        {c:"cu10", n:"聖杯十 (Ten of Cups)", e:"water", u:"家庭幸福、和諧、情感圓滿", r:"家庭失和、價值觀衝突"},
+        {c:"cupa", n:"聖杯侍者 (Page of Cups)", e:"water", u:"新消息(情感)、直覺、創意", r:"情緒不穩、壞消息、幼稚"},
+        {c:"cukn", n:"聖杯騎士 (Knight of Cups)", e:"water", u:"浪漫、求愛、魅力、想像力", r:"情緒化、欺騙、不切實際"},
+        {c:"cuqu", n:"聖杯皇后 (Queen of Cups)", e:"water", u:"慈悲、關懷、直覺、情感深度", r:"依賴、情緒勒索、多愁善感"},
+        {c:"cuki", n:"聖杯國王 (King of Cups)", e:"water", u:"情緒平衡、寬容、外交、智慧", r:"冷漠、情緒操控、喜怒無常"},
 
-        // --- 寶劍 (風) ---
-        {n:"寶劍王牌 (Ace of Swords)", e:"air", u:"突破、清晰、新想法、真理", r:"混亂、思緒不清、殘酷"},
-        {n:"寶劍二 (Two of Swords)", e:"air", u:"僵局、困難決定、逃避、妥協", r:"做出決定、揭露真相、釋放"},
-        {n:"寶劍三 (Three of Swords)", e:"air", u:"心碎、悲傷、痛苦、分離", r:"釋放痛苦、原諒、康復"},
-        {n:"寶劍四 (Four of Swords)", e:"air", u:"休息、恢復、沈思、暫停", r:"過勞、恢復活動、壓力"},
-        {n:"寶劍五 (Five of Swords)", e:"air", u:"衝突、失敗、自私、不擇手段", r:"和解、原諒、解決衝突"},
-        {n:"寶劍六 (Six of Swords)", e:"air", u:"過渡、離開痛苦、療癒之旅", r:"情感包袱、無法前進"},
-        {n:"寶劍七 (Seven of Swords)", e:"air", u:"欺騙、策略、偷竊、逃避責任", r:"自白、被揭穿、良心發現"},
-        {n:"寶劍八 (Eight of Swords)", e:"air", u:"束縛、受害者心態、無力感", r:"重獲自由、新視角、解決問題"},
-        {n:"寶劍九 (Nine of Swords)", e:"air", u:"焦慮、噩夢、恐懼、絕望", r:"恐懼釋放、求助、好轉"},
-        {n:"寶劍十 (Ten of Swords)", e:"air", u:"毀滅、痛苦結束、背叛", r:"復甦、倖存、不可避免的結束"},
-        {n:"寶劍侍者 (Page of Swords)", e:"air", u:"好奇、新想法、溝通、觀察", r:"散漫、欺騙、說閒話、偏執"},
-        {n:"寶劍騎士 (Knight of Swords)", e:"air", u:"野心、行動迅速、直接", r:"衝動、魯莽、言語暴力"},
-        {n:"寶劍皇后 (Queen of Swords)", e:"air", u:"獨立、清晰判斷、界線、直接", r:"冷酷、苦澀、殘忍、情緒化"},
-        {n:"寶劍國王 (King of Swords)", e:"air", u:"理智權威、真理、公正、紀律", r:"操縱、暴君、殘忍、冷血"},
+        // --- 寶劍 (sw) ---
+        {c:"swac", n:"寶劍王牌 (Ace of Swords)", e:"air", u:"突破、清晰、新想法、真理", r:"混亂、思緒不清、殘酷"},
+        {c:"sw02", n:"寶劍二 (Two of Swords)", e:"air", u:"僵局、困難決定、逃避、妥協", r:"做出決定、揭露真相、釋放"},
+        {c:"sw03", n:"寶劍三 (Three of Swords)", e:"air", u:"心碎、悲傷、痛苦、分離", r:"釋放痛苦、原諒、康復"},
+        {c:"sw04", n:"寶劍四 (Four of Swords)", e:"air", u:"休息、恢復、沈思、暫停", r:"過勞、恢復活動、壓力"},
+        {c:"sw05", n:"寶劍五 (Five of Swords)", e:"air", u:"衝突、失敗、自私、不擇手段", r:"和解、原諒、解決衝突"},
+        {c:"sw06", n:"寶劍六 (Six of Swords)", e:"air", u:"過渡、離開痛苦、療癒之旅", r:"情感包袱、無法前進"},
+        {c:"sw07", n:"寶劍七 (Seven of Swords)", e:"air", u:"欺騙、策略、偷竊、逃避責任", r:"自白、被揭穿、良心發現"},
+        {c:"sw08", n:"寶劍八 (Eight of Swords)", e:"air", u:"束縛、受害者心態、無力感", r:"重獲自由、新視角、解決問題"},
+        {c:"sw09", n:"寶劍九 (Nine of Swords)", e:"air", u:"焦慮、噩夢、恐懼、絕望", r:"恐懼釋放、求助、好轉"},
+        {c:"sw10", n:"寶劍十 (Ten of Swords)", e:"air", u:"毀滅、痛苦結束、背叛", r:"復甦、倖存、不可避免的結束"},
+        {c:"swpa", n:"寶劍侍者 (Page of Swords)", e:"air", u:"好奇、新想法、溝通、觀察", r:"散漫、欺騙、說閒話、偏執"},
+        {c:"swkn", n:"寶劍騎士 (Knight of Swords)", e:"air", u:"野心、行動迅速、直接", r:"衝動、魯莽、言語暴力"},
+        {c:"swqu", n:"寶劍皇后 (Queen of Swords)", e:"air", u:"獨立、清晰判斷、界線、直接", r:"冷酷、苦澀、殘忍、情緒化"},
+        {c:"swki", n:"寶劍國王 (King of Swords)", e:"air", u:"理智權威、真理、公正、紀律", r:"操縱、暴君、殘忍、冷血"},
 
-        // --- 錢幣 (土) ---
-        {n:"錢幣王牌 (Ace of Pentacles)", e:"earth", u:"新機會、繁榮、財富、穩定", r:"錯失機會、財務損失、貪婪"},
-        {n:"錢幣二 (Two of Pentacles)", e:"earth", u:"平衡、適應、多重任務", r:"失衡、混亂、財務困難"},
-        {n:"錢幣三 (Three of Pentacles)", e:"earth", u:"團隊合作、技能、執行、品質", r:"缺乏合作、工作懶散"},
-        {n:"錢幣四 (Four of Pentacles)", e:"earth", u:"守財、控制、安全感、穩定", r:"慷慨、失去控制、揮霍"},
-        {n:"錢幣五 (Five of Pentacles)", e:"earth", u:"貧窮、孤立、不安全感、損失", r:"恢復、援助到來、好轉"},
-        {n:"錢幣六 (Six of Pentacles)", e:"earth", u:"慷慨、慈善、給予與接受", r:"債務、自私、不平等交易"},
-        {n:"錢幣七 (Seven of Pentacles)", e:"earth", u:"耐心、評估、長期投資", r:"缺乏回報、焦慮、放棄"},
-        {n:"錢幣八 (Eight of Pentacles)", e:"earth", u:"勤奮、技能精進、專注細節", r:"完美主義、缺乏野心"},
-        {n:"錢幣九 (Nine of Pentacles)", e:"earth", u:"富足、獨立、享受生活", r:"依賴、財務依賴、膚淺"},
-        {n:"錢幣十 (Ten of Pentacles)", e:"earth", u:"遺產、家庭富裕、長期穩定", r:"家庭紛爭、財務失敗"},
-        {n:"錢幣侍者 (Page of Pentacles)", e:"earth", u:"展現、學習機會、勤奮、務實", r:"拖延、缺乏進步、懶惰"},
-        {n:"錢幣騎士 (Knight of Pentacles)", e:"earth", u:"效率、例行公事、保守", r:"停滯、懶惰、頑固、無聊"},
-        {n:"錢幣皇后 (Queen of Pentacles)", e:"earth", u:"務實、滋養、財務安全、愛家", r:"工作狂、嫉妒、自我懷疑"},
-        {n:"錢幣國王 (King of Pentacles)", e:"earth", u:"富裕、商業頭腦、紀律", r:"貪婪、固執、物質主義"}
+        // --- 錢幣 (pe) ---
+        {c:"peac", n:"錢幣王牌 (Ace of Pentacles)", e:"earth", u:"新機會、繁榮、財富、穩定", r:"錯失機會、財務損失、貪婪"},
+        {c:"pe02", n:"錢幣二 (Two of Pentacles)", e:"earth", u:"平衡、適應、多重任務", r:"失衡、混亂、財務困難"},
+        {c:"pe03", n:"錢幣三 (Three of Pentacles)", e:"earth", u:"團隊合作、技能、執行、品質", r:"缺乏合作、工作懶散"},
+        {c:"pe04", n:"錢幣四 (Four of Pentacles)", e:"earth", u:"守財、控制、安全感、穩定", r:"慷慨、失去控制、揮霍"},
+        {c:"pe05", n:"錢幣五 (Five of Pentacles)", e:"earth", u:"貧窮、孤立、不安全感、損失", r:"恢復、援助到來、好轉"},
+        {c:"pe06", n:"錢幣六 (Six of Pentacles)", e:"earth", u:"慷慨、慈善、給予與接受", r:"債務、自私、不平等交易"},
+        {c:"pe07", n:"錢幣七 (Seven of Pentacles)", e:"earth", u:"耐心、評估、長期投資", r:"缺乏回報、焦慮、放棄"},
+        {c:"pe08", n:"錢幣八 (Eight of Pentacles)", e:"earth", u:"勤奮、技能精進、專注細節", r:"完美主義、缺乏野心"},
+        {c:"pe09", n:"錢幣九 (Nine of Pentacles)", e:"earth", u:"富足、獨立、享受生活", r:"依賴、財務依賴、膚淺"},
+        {c:"pe10", n:"錢幣十 (Ten of Pentacles)", e:"earth", u:"遺產、家庭富裕、長期穩定", r:"家庭紛爭、財務失敗"},
+        {c:"pepa", n:"錢幣侍者 (Page of Pentacles)", e:"earth", u:"展現、學習機會、勤奮、務實", r:"拖延、缺乏進步、懶惰"},
+        {c:"pekn", n:"錢幣騎士 (Knight of Pentacles)", e:"earth", u:"效率、例行公事、保守", r:"停滯、懶惰、頑固、無聊"},
+        {c:"pequ", n:"錢幣皇后 (Queen of Pentacles)", e:"earth", u:"務實、滋養、財務安全、愛家", r:"工作狂、嫉妒、自我懷疑"},
+        {c:"peki", n:"錢幣國王 (King of Pentacles)", e:"earth", u:"富裕、商業頭腦、紀律", r:"貪婪、固執、物質主義"}
     ];
 
     const grid = document.getElementById('grid');
@@ -207,7 +224,6 @@
         }
 
         data.forEach(d => {
-            // 判斷元素中文名稱
             let elName = '';
             if(d.e === 'major') elName = '大牌';
             else if(d.e === 'fire') elName = '火';
@@ -215,28 +231,16 @@
             else if(d.e === 'air') elName = '風';
             else if(d.e === 'earth') elName = '土';
 
-            // 產生圖片網址 (使用 placehold.co 服務，支援文字顯示)
-            // 將牌名中的英文部分提取出來顯示在圖片上，若無英文則顯示前兩個字
-            let imgText = d.n.match(/\((.*?)\)/) ? d.n.match(/\((.*?)\)/)[1] : d.n.substring(0,4);
-            // 處理 URL 編碼
-            imgText = encodeURIComponent(imgText);
-            
-            // 根據元素改變圖片背景色
-            let colorHex = '333';
-            if(d.e==='major') colorHex='8e44ad';
-            if(d.e==='fire') colorHex='c0392b';
-            if(d.e==='water') colorHex='2980b9';
-            if(d.e==='air') colorHex='f39c12';
-            if(d.e==='earth') colorHex='27ae60';
-            
-            const imgSrc = `https://placehold.co/400x250/${colorHex}/ffffff?text=${imgText}`;
+            // 組合圖片網址
+            const imgSrc = imgBaseUrl + d.c + ".jpg";
 
             const div = document.createElement('div');
             div.className = 'card';
             div.innerHTML = `
                 <div class="img-container">
                     <span class="badge ${d.e}">${elName}</span>
-                    <img src="${imgSrc}" alt="${d.n}" class="card-img" onerror="this.src='https://placehold.co/400x250?text=No+Image'">
+                    <img src="${imgSrc}" alt="${d.n}" class="card-img" loading="lazy" 
+                         onerror="this.src='https://via.placeholder.com/200x350?text=Image+Error'">
                 </div>
                 <div class="content">
                     <h3>${hl(d.n)}</h3>
@@ -254,23 +258,18 @@
         });
     }
 
-    // 關鍵字高亮
     function hl(txt) {
         const v = input.value.trim();
         if(!v) return txt;
         return txt.replace(new RegExp(v, 'gi'), m => `<span class="highlight">${m}</span>`);
     }
 
-    // 篩選與搜尋
     function filter(type, btn) {
         currentType = type;
-        
-        // 更新按鈕狀態
         if(btn) {
             document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
         }
-        
         search();
     }
 
@@ -278,21 +277,14 @@
         const v = input.value.trim().toLowerCase();
         
         const res = cards.filter(c => {
-            // 先過濾類型
             if(currentType !== 'all' && c.e !== currentType) return false;
-            
-            // 再過濾關鍵字
-            return c.n.toLowerCase().includes(v) || 
-                   c.u.includes(v) || 
-                   c.r.includes(v);
+            return c.n.toLowerCase().includes(v) || c.u.includes(v) || c.r.includes(v);
         });
         
         render(res);
     }
 
     input.addEventListener('input', search);
-    
-    // 初始渲染
     render(cards);
 
 </script>
