@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>78張塔羅牌義查詢 (完整圖文版)</title>
+    <title>78張塔羅牌義查詢 (圖文版)</title>
     <style>
         :root {
             --primary: #2c3e50;
@@ -46,30 +46,22 @@
         }
         .card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.15); }
         
-        /* --- 修改重點開始 --- */
         .img-container {
             width: 100%;
-            /* 稍微增加高度讓牌看起來更大 */
-            height: 400px; 
-            background: #f1f2f6; /* 圖片沒填滿的區域顯示淺灰色背景 */
+            /* 設定圖片容器高度，確保整齊 */
+            height: 350px; 
+            background: #f1f2f6;
             position: relative;
             overflow: hidden;
-            /* 增加一點內距，讓牌不要貼邊 */
-            padding: 10px;
-            box-sizing: border-box; 
         }
         
         .card-img {
             width: 100%;
             height: 100%;
-            /* 關鍵修改：改成 contain，確保整張圖完整顯示，不裁切 */
-            object-fit: contain; 
-            object-position: center;
+            object-fit: cover; /* 讓圖片填滿容器 */
+            object-position: top center; /* 讓圖片重點偏上方顯示 */
             transition: transform 0.5s;
-            /* 加一點陰影讓牌有立體感 */
-            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
         }
-        /* --- 修改重點結束 --- */
         
         .card:hover .card-img { transform: scale(1.05); }
 
@@ -98,6 +90,7 @@
         /* 手機版優化 */
         @media (max-width: 600px) {
             .grid { grid-template-columns: 1fr; }
+            .img-container { height: 400px; } /* 手機上圖片大一點比較好看 */
         }
 
     </style>
@@ -106,7 +99,7 @@
 
 <header>
     <h1>🔮 塔羅牌義資料庫</h1>
-    <p>經典萊德偉特塔羅牌 (Rider-Waite) - 完整圖文版</p>
+    <p>經典萊德偉特塔羅牌 (Rider-Waite)</p>
 </header>
 
 <div class="controls">
@@ -124,10 +117,11 @@
 <div id="grid" class="grid"></div>
 
 <script>
-    // 圖片來源基礎網址
+    // 圖片來源基礎網址 (使用 sacred-texts 的公開資源，因為它們命名最有規律)
     const imgBaseUrl = "https://www.sacred-texts.com/tarot/pkt/img/";
 
-    // 為了對應圖片檔名，我們增加 'c' (code) 欄位
+    // 為了對應圖片檔名，我們增加 'code' 欄位
+    // 命名規則：ar=大牌, wa=權杖, cu=聖杯, sw=寶劍, pe=錢幣
     const cards = [
         // --- 大阿爾克那 (ar00 - ar21) ---
         {c:"ar00", n:"0. 愚者 (The Fool)", e:"major", u:"新的開始、冒險、天真、潛力", r:"魯莽、冒險過度、愚蠢"},
@@ -237,6 +231,7 @@
             else if(d.e === 'air') elName = '風';
             else if(d.e === 'earth') elName = '土';
 
+            // 組合圖片網址
             const imgSrc = imgBaseUrl + d.c + ".jpg";
 
             const div = document.createElement('div');
