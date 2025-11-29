@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>道教神仙寶誥大全</title>
+    <style>
+        :root {
+            --primary-color: #8B0000; /* 深紅 */
+            --secondary-color: #FFD700; /* 金色 */
+            --bg-color: #fdfbf7; /* 米白紙質感 */
+            --text-color: #333;
+        }
+
+        body {
+            font-family: "Microsoft JhengHei", "Heiti TC", sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+        }
+
+        /* 標題區 */
+        header {
+            background-color: var(--primary-color);
+            color: var(--secondary-color);
+            text-align: center;
+            padding: 2rem 1rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 2.5rem;
+            letter-spacing: 5px;
+        }
+
+        header p {
+            margin-top: 10px;
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        /* 搜尋區 */
+        .search-container {
+            text-align: center;
+            padding: 2rem;
+            position: sticky;
+            top: 0;
+            background-color: var(--bg-color);
+            z-index: 100;
+            border-bottom: 2px solid #ddd;
+        }
+
+        #searchInput {
+            width: 80%;
+            max-width: 500px;
+            padding: 12px 20px;
+            font-size: 16px;
+            border: 2px solid var(--primary-color);
+            border-radius: 25px;
+            outline: none;
+        }
+
+        /* 列表區 */
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            text-align: center;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+            border-color: var(--secondary-color);
+        }
+
+        .card img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            background-color: #eee;
+        }
+
+        .card h3 {
+            margin: 15px 0;
+            color: var(--primary-color);
+        }
+
+        /* 彈出視窗 (Modal) */
+        .modal {
+            display: none; 
+            position: fixed; 
+            z-index: 1000; 
+            left: 0;
+            top: 0;
+            width: 100%; 
+            height: 100%; 
+            background-color: rgba(0,0,0,0.7); 
+            overflow: auto;
+        }
+
+        .modal-content {
+            background-color: #fff;
+            margin: 5% auto; 
+            padding: 0;
+            border: 1px solid #888;
+            width: 90%;
+            max-width: 800px;
+            border-radius: 10px;
+            position: relative;
+            animation: fadeIn 0.4s;
+        }
+
+        @keyframes fadeIn {
+            from {opacity: 0; transform: translateY(-50px);}
+            to {opacity: 1; transform: translateY(0);}
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            position: absolute;
+            right: 20px;
+            top: 10px;
+            cursor: pointer;
+        }
+
+        .close:hover {
+            color: var(--primary-color);
+        }
+
+        .modal-header {
+            padding: 20px;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 10px 10px 0 0;
+            text-align: center;
+        }
+
+        .modal-body {
+            padding: 25px;
+            line-height: 1.8;
+        }
+
+        .baogao-box {
+            background-color: #fff8e1;
+            padding: 20px;
+            border-left: 5px solid var(--secondary-color);
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .section-title {
+            color: var(--primary-color);
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 10px;
+            margin-top: 20px;
+            margin-bottom: 15px;
+        }
+
+        /* 圖片佔位符 */
+        .placeholder-text {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 250px;
+            background: #eee;
+            color: #777;
+        }
+
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>道教神仙寶鑑</h1>
+    <p>收錄諸天仙真寶誥、聖像與簡介</p>
+</header>
+
+<div class="search-container">
+    <input type="text" id="searchInput" placeholder="搜尋神仙名稱 (如: 玉皇、慈航、關聖)...">
+</div>
+
+<div class="grid-container" id="deityGrid">
+    </div>
+
+<div id="deityModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <div class="modal-header">
+            <h2 id="modalTitle">神仙名稱</h2>
+        </div>
+        <div class="modal-body">
+            <div style="text-align: center; margin-bottom: 20px;">
+                 <img id="modalImage" src="" alt="神像" style="max-width: 100%; max-height: 400px; border-radius: 5px;">
+            </div>
+
+            <h3 class="section-title">寶誥</h3>
+            <div class="baogao-box">
+                <p id="modalBaogao">這裡顯示寶誥內容...</p>
+            </div>
+
+            <h3 class="section-title">簡介與神職</h3>
+            <p id="modalDesc">這裡顯示介紹...</p>
+        </div>
+    </div>
+</div>
+
+<script>
+    // --- 1. 資料庫 (您可以由此處新增更多神仙) ---
+    // image 欄位請填入圖片的網址，若無圖片可留空
+    const deities = [
+        {
+            name: "玉皇大帝",
+            image: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/62/Jade_Emperor.jpg/440px-Jade_Emperor.jpg", 
+            baogao: "志心皈命禮。<br>太上彌羅無上天，妙有玄真境。<br>渺渺紫金闕，太微玉清宮。<br>無極無上聖，廓落發光明。<br>寂寂浩無宗，玄範總十方。<br>湛寂真常道，恢漠大神通。<br>玉皇大天尊，玄穹高上帝。",
+            desc: "玉皇大帝，全稱「太上開天執符御歷含真體道金闕雲宮九穹御歷萬道無為通明大殿昊天金闕玉皇大天尊玄穹高上帝」，簡稱「玉帝」或「天公」。<br><br>祂是道教神系中地位極高的神祇，統轄三界十方諸神與四生六道芸芸眾生。"
+        },
+        {
+            name: "慈航真人 (觀音大士)",
+            image: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Guanyin.jpg/300px-Guanyin.jpg", 
+            baogao: "志心皈命禮。<br>莊王毓秀，受帝命而誕生；<br>教闡南洋，奉敕旨而救劫。<br>尋聲感應，動念垂慈。<br>聖德昭彰，玄功莫測。<br>幽顯昭蘇而蒙恩濟度，<br>品物咸賴而荷惠生成。<br>外道仰依，邪魔拱手。<br>大悲大願，大聖大慈。<br>尋聲救苦救難，慈航普度天尊。",
+            desc: "慈航真人，即佛教所稱之觀世音菩薩。在道教中，祂被尊稱為「慈航大士」或「慈航普度天尊」。<br><br>傳說中祂本是元始天尊門下十二金仙之一，後發願普度眾生，常化身千萬，聞聲救苦。"
+        },
+        {
+            name: "關聖帝君",
+            image: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/07/Guan_Yu_statue.jpg/300px-Guan_Yu_statue.jpg", 
+            baogao: "志心皈命禮。<br>太上神威，英文雄武。<br>精忠大義，高節清廉。<br>運協皇圖，德崇演正。<br>掌儒釋道教之權，管天地人才之柄。<br>上司三十六天星辰雲漢，下轄七十二地土壘幽丰。<br>秉注生功德，延壽丹書；<br>執定死罪過，奪命黑籍。<br>考察諸佛諸神，監制群仙群職。<br>高證妙果，無量度人。<br>萬靈萬神，至上至尊。<br>伏魔大帝，關聖帝君。",
+            desc: "關聖帝君，原名關羽，字雲長。是忠義的象徵，被道教尊為「協天大帝」、「伏魔大帝」、「翊漢天尊」。<br><br>祂不僅是武神，也被視為武財神及儒家文化的守護神，職掌十分廣泛，包括治病除災、驅邪辟惡等。"
+        },
+        {
+            name: "太上老君",
+            image: "", // 無圖片範例
+            baogao: "志心皈命禮。<br>隨方設教，歷劫度人。<br>為皇者師，帝者師，王者師，假名易號。<br>立天之道，地之道，人之道，隱聖顯凡。<br>總千二百之官君，包萬億重之梵炁。<br>太上老君，道德天尊。",
+            desc: "太上老君，即「道德天尊」，三清之一。道教創始者，公認為道教教祖。<br><br>祂是「道」的化身，著有《道德經》五千言，傳世教化。"
+        }
+    ];
+
+    // --- 2. 程式邏輯區 ---
+
+    const grid = document.getElementById('deityGrid');
+    const searchInput = document.getElementById('searchInput');
+    const modal = document.getElementById('deityModal');
+    const closeBtn = document.getElementsByClassName("close")[0];
+
+    // 渲染卡片函數
+    function renderCards(data) {
+        grid.innerHTML = ''; // 清空現有內容
+        data.forEach(item => {
+            const card = document.createElement('div');
+            card.className = 'card';
+            
+            // 處理圖片，如果沒有圖片連結則顯示灰色佔位
+            let imgHTML = '';
+            if(item.image) {
+                imgHTML = `<img src="${item.image}" alt="${item.name}">`;
+            } else {
+                imgHTML = `<div class="placeholder-text">暫無圖片</div>`;
+            }
+
+            card.innerHTML = `
+                ${imgHTML}
+                <h3>${item.name}</h3>
+            `;
+            
+            // 點擊事件
+            card.addEventListener('click', () => openModal(item));
+            grid.appendChild(card);
+        });
+    }
+
+    // 開啟彈出視窗
+    function openModal(item) {
+        document.getElementById('modalTitle').innerText = item.name;
+        document.getElementById('modalBaogao').innerHTML = item.baogao || "暫無寶誥";
+        document.getElementById('modalDesc').innerHTML = item.desc || "暫無介紹";
+        
+        const imgEl = document.getElementById('modalImage');
+        if(item.image) {
+            imgEl.src = item.image;
+            imgEl.style.display = 'inline-block';
+        } else {
+            imgEl.style.display = 'none';
+        }
+
+        modal.style.display = "block";
+    }
+
+    // 關閉彈出視窗
+    closeBtn.onclick = function() {
+        modal.style.display = "none";
+    }
+    
+    // 點擊視窗外部也可關閉
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    }
+
+    // 搜尋過濾功能
+    searchInput.addEventListener('input', (e) => {
+        const keyword = e.target.value.toLowerCase();
+        const filteredData = deities.filter(item => 
+            item.name.toLowerCase().includes(keyword) || 
+            item.desc.toLowerCase().includes(keyword)
+        );
+        renderCards(filteredData);
+    });
+
+    // 初始化渲染
+    renderCards(deities);
+
+</script>
+
+</body>
+</html>
