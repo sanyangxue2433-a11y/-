@@ -3,42 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>我的雲端收藏清單</title>
+    <title>我的雲端收藏清單 (修復版)</title>
     <style>
         :root { --primary: #4a90e2; --bg: #f4f7f6; --card-bg: #ffffff; --text: #333; --green: #2ecc71; --red: #e74c3c; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 20px; padding-bottom: 80px; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 20px; padding-bottom: 80px; }
         
-        /* Header & Controls */
         header { max-width: 1000px; margin: 0 auto 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
         h1 { margin: 0; font-size: 1.5rem; }
         .stats { font-size: 0.9rem; color: #666; width: 100%; margin-top: 5px;}
 
-        .btn-group { display: flex; gap: 10px; }
+        .btn-group { display: flex; gap: 10px; flex-wrap: wrap;}
         button { border: none; padding: 8px 16px; border-radius: 20px; font-size: 0.9rem; cursor: pointer; transition: transform 0.2s; color: white; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        button:hover { transform: scale(1.05); }
+        button:active { transform: scale(0.95); }
         .add-btn { background-color: var(--primary); font-size: 1rem; padding: 10px 20px; }
         .backup-btn { background-color: #f39c12; }
         .restore-btn { background-color: #8e44ad; }
         
-        /* Grid */
         .grid-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; max-width: 1000px; margin: 0 auto; }
         
-        /* Card */
         .card { background: var(--card-bg); border-radius: 12px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.05); position: relative; border: 2px solid transparent; }
         .card.purchased { opacity: 0.7; border-color: var(--green); }
         .card.purchased::after { content: '已購買'; position: absolute; top: 10px; right: 10px; background: var(--green); color: white; padding: 2px 8px; font-size: 0.8rem; border-radius: 4px; font-weight: bold; z-index: 2; }
         
-        .img-container { width: 100%; height: 200px; background-color: #eee; position: relative; cursor: pointer; }
+        .img-container { width: 100%; height: 200px; background-color: #eee; position: relative; cursor: pointer; display: flex; justify-content: center; align-items: center; overflow: hidden;}
         .card-img { width: 100%; height: 100%; object-fit: cover; display: block; }
-        .img-loading { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(255,255,255,0.8); display: none; align-items: center; justify-content: center; color: #333; }
+        .img-placeholder { color: #888; font-size: 0.9rem; text-align: center; padding: 20px; }
+        .img-loading { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); display: none; align-items: center; justify-content: center; color: #fff; font-weight: bold; z-index: 5; text-align: center; padding: 10px;}
         
         .card-body { padding: 15px; }
-        .card input[type="text"], .card textarea { width: 100%; border: 1px solid #ddd; border-radius: 4px; padding: 5px; margin-bottom: 8px; box-sizing: border-box; font-family: inherit; }
+        .card input[type="text"], .card textarea { width: 100%; border: 1px solid #ddd; border-radius: 4px; padding: 8px; margin-bottom: 8px; box-sizing: border-box; font-family: inherit; font-size: 16px; /* 防止手機縮放 */ }
         .card input.title { font-weight: bold; font-size: 1.1rem; }
         .card textarea { resize: none; height: 60px; }
         
         .actions { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; }
-        .delete-btn { color: var(--red); background: none; box-shadow: none; padding: 0; }
+        .delete-btn { color: var(--red); background: none; box-shadow: none; padding: 5px 10px; border: 1px solid var(--red); border-radius: 15px; color: var(--red); font-size: 0.8rem;}
         
         #toast { position: fixed; bottom: 20px; right: 20px; background-color: #333; color: #fff; padding: 12px 24px; border-radius: 8px; opacity: 0; transition: opacity 0.3s; pointer-events: none; z-index: 1000; }
         #toast.show { opacity: 1; }
@@ -50,12 +48,12 @@
 
 <header>
     <div>
-        <h1>📦 雲端購物清單</h1>
-        <div class="stats" id="stats">讀取中...</div>
+        <h1>📦 雲端收藏清單 <small style="font-size:0.8rem; color: #888">(V3 修復版)</small></h1>
+        <div class="stats" id="stats">資料庫連線中...</div>
     </div>
     <div class="btn-group">
-        <button class="backup-btn" onclick="exportData()" title="下載備份檔案">⬇ 備份</button>
-        <button class="restore-btn" onclick="document.getElementById('import-file').click()" title="讀取備份檔案">⬆ 還原</button>
+        <button class="backup-btn" onclick="exportData()">⬇ 備份</button>
+        <button class="restore-btn" onclick="document.getElementById('import-file').click()">⬆ 還原</button>
         <button class="add-btn" onclick="addNewItem()">+ 新增</button>
     </div>
 </header>
@@ -66,10 +64,12 @@
 <div id="toast">提示訊息</div>
 
 <script>
-    const DB_NAME = 'WishlistDB_V2';
+    // --- 核心設定 ---
+    const DB_NAME = 'WishlistDB_V3'; // 升級版本號以重置結構
     const STORE_NAME = 'items';
     let db;
 
+    // 提示框
     const showToast = (msg, type = 'success') => {
         const toast = document.getElementById('toast');
         toast.innerText = msg;
@@ -77,74 +77,130 @@
         setTimeout(() => { toast.className = ''; }, 3000);
     };
 
+    // 初始化資料庫
     const initDB = () => {
+        if (!window.indexedDB) {
+            alert("您的瀏覽器不支援資料庫功能，無法儲存資料。\n請試著用 Chrome 或 Safari 一般模式。");
+            return;
+        }
+
         const request = indexedDB.open(DB_NAME, 1);
+        
         request.onupgradeneeded = (e) => {
             db = e.target.result;
-            if (!db.objectStoreNames.contains(STORE_NAME)) db.createObjectStore(STORE_NAME, { keyPath: 'id' });
+            if (!db.objectStoreNames.contains(STORE_NAME)) {
+                db.createObjectStore(STORE_NAME, { keyPath: 'id' });
+            }
         };
-        request.onsuccess = (e) => { db = e.target.result; loadItems(); };
-        request.onerror = () => showToast("資料庫錯誤", "error");
+
+        request.onsuccess = (e) => {
+            db = e.target.result;
+            loadItems();
+        };
+
+        request.onerror = (e) => {
+            console.error(e);
+            alert("資料庫打開失敗！\n如果您使用無痕模式(Incognito)，請切換回一般模式。");
+        };
     };
 
+    // --- 資料操作 ---
     const saveToDB = (item, silent = false) => {
         return new Promise((resolve, reject) => {
+            if(!db) return reject("DB未就緒");
             const tx = db.transaction([STORE_NAME], 'readwrite');
-            const req = tx.objectStore(STORE_NAME).put(item);
-            req.onsuccess = () => { if(!silent) showToast("💾 已儲存"); updateStats(); resolve(true); };
-            req.onerror = (e) => { showToast("儲存失敗", "error"); reject(e); };
+            
+            tx.oncomplete = () => {
+                if(!silent) showToast("💾 已儲存");
+                updateStats();
+                resolve(true);
+            };
+            
+            tx.onerror = (e) => {
+                // 這裡捕捉配額不足等嚴重錯誤
+                const errName = e.target.error.name;
+                if (errName === 'QuotaExceededError') {
+                    alert("儲存失敗：空間已滿！\n請刪除一些舊項目，或備份後清除資料。");
+                } else {
+                    console.error("Save Error:", e);
+                }
+                reject(e);
+            };
+
+            tx.objectStore(STORE_NAME).put(item);
         });
     };
 
     const deleteItemData = (id) => {
-        if(!confirm('刪除此項目？')) return;
+        if(!confirm('確定刪除此項目？圖片也會被刪除。')) return;
         const tx = db.transaction([STORE_NAME], 'readwrite');
         tx.objectStore(STORE_NAME).delete(id);
-        document.getElementById(`card-${id}`).remove();
-        updateStats();
+        tx.oncomplete = () => {
+            const card = document.getElementById(`card-${id}`);
+            if(card) card.remove();
+            updateStats();
+            showToast("項目已刪除");
+        };
     };
 
     const loadItems = () => {
         const tx = db.transaction([STORE_NAME], 'readonly');
-        tx.objectStore(STORE_NAME).getAll().onsuccess = (e) => {
+        const store = tx.objectStore(STORE_NAME);
+        const req = store.getAll();
+        
+        req.onsuccess = (e) => {
             const items = e.target.result;
             items.sort((a, b) => b.created - a.created);
+            
             const container = document.getElementById('list');
             container.innerHTML = '';
-            if (items.length === 0) for(let i=0; i<1; i++) addNewItem(false);
-            else items.forEach(renderCard);
+            
+            if (items.length === 0) {
+                // 預設給一個範例
+                addNewItem(false);
+            } else {
+                items.forEach(renderCard);
+            }
             updateStats();
         };
     };
 
     const updateStats = () => {
         const tx = db.transaction([STORE_NAME], 'readonly');
-        tx.objectStore(STORE_NAME).getAll().onsuccess = (e) => {
-            const items = e.target.result;
-            const purchased = items.filter(i => i.purchased).length;
-            document.getElementById('stats').innerText = `總數: ${items.length} | 已買: ${purchased} | 待購: ${items.length - purchased}`;
+        tx.objectStore(STORE_NAME).count().onsuccess = (e) => {
+            const count = e.target.result;
+            document.getElementById('stats').innerText = `目前項目數: ${count}`;
         };
     };
 
+    // --- 畫面渲染 ---
     const renderCard = (item) => {
         const container = document.getElementById('list');
         const div = document.createElement('div');
         div.className = `card ${item.purchased ? 'purchased' : ''}`;
         div.id = `card-${item.id}`;
-        const imgSrc = item.image || 'https://via.placeholder.com/300x200?text=點擊加圖';
+        
+        // 圖片顯示邏輯
+        let imgDisplay = `<div class="img-placeholder">點擊上傳照片</div>`;
+        if (item.image) {
+            imgDisplay = `<img src="${item.image}" class="card-img" id="img-${item.id}">`;
+        }
 
         div.innerHTML = `
             <input type="file" id="file-${item.id}" style="display:none" accept="image/*" onchange="handleImage('${item.id}', this)">
             <div class="img-container" onclick="document.getElementById('file-${item.id}').click()">
                 <div class="img-loading" id="loading-${item.id}">處理中...</div>
-                <img src="${imgSrc}" class="card-img" id="img-${item.id}">
+                <div id="img-wrap-${item.id}" style="width:100%;height:100%">${imgDisplay}</div>
             </div>
             <div class="card-body">
                 <input type="text" class="title" value="${item.name}" placeholder="物品名稱" onchange="updateField('${item.id}', 'name', this.value)">
                 <input type="date" value="${item.date}" onchange="updateField('${item.id}', 'date', this.value)">
                 <textarea placeholder="備註..." onchange="updateField('${item.id}', 'note', this.value)">${item.note}</textarea>
                 <div class="actions">
-                    <label style="cursor:pointer;"><input type="checkbox" ${item.purchased ? 'checked' : ''} onchange="toggleStatus('${item.id}', this.checked)"> 已買</label>
+                    <label style="cursor:pointer;display:flex;align-items:center;">
+                        <input type="checkbox" ${item.purchased ? 'checked' : ''} onchange="toggleStatus('${item.id}', this.checked)"> 
+                        &nbsp;已買
+                    </label>
                     <button class="delete-btn" onclick="deleteItemData('${item.id}')">刪除</button>
                 </div>
             </div>`;
@@ -152,53 +208,130 @@
     };
 
     const addNewItem = (shouldSave = true) => {
-        const newItem = { id: Date.now().toString()+Math.random().toString(36).substr(2,5), name: '', date: new Date().toISOString().split('T')[0], note: '', purchased: false, image: null, created: Date.now() };
+        const newItem = { 
+            id: Date.now().toString() + Math.random().toString(36).substr(2,4), 
+            name: '', 
+            date: new Date().toISOString().split('T')[0], 
+            note: '', 
+            purchased: false, 
+            image: null, 
+            created: Date.now() 
+        };
         if(shouldSave) saveToDB(newItem, true);
         renderCard(newItem);
     };
 
     const updateField = (id, field, value) => {
-        const store = db.transaction([STORE_NAME], 'readwrite').objectStore(STORE_NAME);
-        store.get(id).onsuccess = (e) => { const data = e.target.result; if(data){ data[field] = value; saveToDB(data); }};
+        const tx = db.transaction([STORE_NAME], 'readwrite');
+        const store = tx.objectStore(STORE_NAME);
+        store.get(id).onsuccess = (e) => {
+            const data = e.target.result;
+            if(data){ 
+                data[field] = value; 
+                store.put(data); 
+            }
+        };
     };
 
     const toggleStatus = (id, isChecked) => {
-        document.getElementById(`card-${id}`).classList.toggle('purchased', isChecked);
+        const card = document.getElementById(`card-${id}`);
+        if(isChecked) card.classList.add('purchased');
+        else card.classList.remove('purchased');
         updateField(id, 'purchased', isChecked);
     };
 
+    // --- 關鍵修復：圖片處理 ---
     const handleImage = (id, input) => {
         const file = input.files[0];
         if (!file) return;
-        document.getElementById(`loading-${id}`).style.display = 'flex';
+
+        // UI 狀態：顯示讀取中
+        const loadingEl = document.getElementById(`loading-${id}`);
+        loadingEl.style.display = 'flex';
+        loadingEl.innerText = "壓縮中...";
+
         const reader = new FileReader();
+        
         reader.onload = (e) => {
             const img = new Image();
             img.src = e.target.result;
+            
             img.onload = () => {
-                const cvs = document.createElement('canvas');
-                const ctx = cvs.getContext('2d');
-                const maxW = 800;
-                let w = img.width, h = img.height;
-                if (w > maxW) { h *= maxW / w; w = maxW; }
-                cvs.width = w; cvs.height = h;
-                ctx.drawImage(img, 0, 0, w, h);
-                const dataUrl = cvs.toDataURL('image/jpeg', 0.6);
-                const store = db.transaction([STORE_NAME], 'readwrite').objectStore(STORE_NAME);
-                store.get(id).onsuccess = (ev) => {
-                    const data = ev.target.result;
-                    if(data) { data.image = dataUrl; store.put(data).onsuccess = () => {
-                        document.getElementById(`img-${id}`).src = dataUrl;
-                        document.getElementById(`loading-${id}`).style.display = 'none';
-                        showToast("📸 照片已儲存");
-                    };}
-                };
+                try {
+                    const cvs = document.createElement('canvas');
+                    const ctx = cvs.getContext('2d');
+                    
+                    // 【修復1】更嚴格的尺寸限制，避免記憶體爆掉
+                    const maxW = 600; 
+                    let w = img.width, h = img.height;
+                    
+                    if (w > maxW) { 
+                        h *= maxW / w; 
+                        w = maxW; 
+                    }
+                    
+                    cvs.width = w; 
+                    cvs.height = h;
+                    ctx.drawImage(img, 0, 0, w, h);
+                    
+                    // 【修復2】降低品質至 0.5 以節省空間
+                    const dataUrl = cvs.toDataURL('image/jpeg', 0.5);
+
+                    loadingEl.innerText = "存檔中...";
+
+                    // 寫入資料庫流程
+                    const tx = db.transaction([STORE_NAME], 'readwrite');
+                    const store = tx.objectStore(STORE_NAME);
+                    
+                    // 先讀取舊資料，再更新圖片
+                    store.get(id).onsuccess = (ev) => {
+                        const data = ev.target.result;
+                        if(data) {
+                            data.image = dataUrl;
+                            const putReq = store.put(data);
+
+                            putReq.onsuccess = () => {
+                                // 成功後才更新畫面
+                                const imgWrap = document.getElementById(`img-wrap-${id}`);
+                                imgWrap.innerHTML = `<img src="${dataUrl}" class="card-img" id="img-${id}">`;
+                                loadingEl.style.display = 'none';
+                                showToast("📸 照片已儲存");
+                            };
+
+                            putReq.onerror = (err) => {
+                                alert("儲存失敗！代碼：" + err.target.error.name);
+                                loadingEl.style.display = 'none';
+                            };
+                        }
+                    };
+
+                    tx.onerror = (err) => {
+                        const code = err.target.error.name;
+                        if(code === 'QuotaExceededError'){
+                            alert("❌ 儲存失敗：容量已滿。\n建議刪除一些舊照片。");
+                        } else {
+                            alert("❌ 儲存失敗：資料庫錯誤 (" + code + ")");
+                        }
+                        loadingEl.style.display = 'none';
+                    };
+
+                } catch (error) {
+                    alert("❌ 圖片處理失敗，請換一張試試。");
+                    console.error(error);
+                    loadingEl.style.display = 'none';
+                }
+            };
+            
+            img.onerror = () => {
+                alert("❌ 無法讀取此圖片格式");
+                loadingEl.style.display = 'none';
             };
         };
         reader.readAsDataURL(file);
+        input.value = ''; // 重置 input 讓同一張圖可以再次選取
     };
 
-    // --- 備份與還原功能 ---
+    // --- 備份還原 ---
     const exportData = () => {
         const tx = db.transaction([STORE_NAME], 'readonly');
         tx.objectStore(STORE_NAME).getAll().onsuccess = (e) => {
@@ -209,7 +342,6 @@
             a.href = url;
             a.download = `購物清單備份_${new Date().toISOString().split('T')[0]}.json`;
             a.click();
-            showToast("備份檔案已下載");
         };
     };
 
@@ -220,26 +352,15 @@
         reader.onload = (e) => {
             try {
                 const items = JSON.parse(e.target.result);
-                if(!Array.isArray(items)) throw new Error("格式錯誤");
-                if(!confirm(`確定要匯入 ${items.length} 筆資料嗎？\n這將會合併現有資料。`)) return;
+                if(!confirm(`要匯入 ${items.length} 筆資料嗎？`)) return;
                 
                 const tx = db.transaction([STORE_NAME], 'readwrite');
                 const store = tx.objectStore(STORE_NAME);
-                let count = 0;
-                items.forEach(item => {
-                    store.put(item);
-                    count++;
-                });
-                tx.oncomplete = () => {
-                    alert(`成功匯入 ${count} 筆資料！頁面將重新整理。`);
-                    location.reload();
-                };
-            } catch(err) {
-                alert("檔案格式錯誤或損毀");
-            }
+                items.forEach(item => store.put(item));
+                tx.oncomplete = () => { alert("匯入成功！"); location.reload(); };
+            } catch(err) { alert("檔案格式錯誤"); }
         };
         reader.readAsText(file);
-        input.value = ''; // Reset
     };
 
     initDB();
