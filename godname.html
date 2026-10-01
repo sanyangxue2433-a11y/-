@@ -317,178 +317,181 @@
     const FALLBACK_IMAGE = "https://upload.wikimedia.org/wikipedia/commons/thumb/1/17/Yin_yang.svg/200px-Yin_yang.svg.png";
 
     // --- 超大型神仙資料庫 (約40位核心神祇) ---
-    const deities = [
-        // --- 三清道祖 ---
-        {
-            name: "元始天尊",
-            image: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Yuanshi_Tianzun_White_Cloud_Temple_Beijing.jpg/300px-Yuanshi_Tianzun_White_Cloud_Temple_Beijing.jpg",
-            baogao: "志心皈命禮。\n三界之上，梵炁彌羅。\n上極無上，天中之天。\n鬱羅蕭臺，玉山上京。\n渺渺金闕，森森羅天。\n含虛淳寂，上極無上。\n宇宙之祖，萬道之宗。\n玉清聖境，元始天尊。",
-            desc: "【三清之首】全稱「玉清聖境虛無自然元始天尊」。象徵天地未形、混沌未開之前的「無極」狀態，是宇宙大道的源頭。"
-        },
-        {
-            name: "靈寶天尊",
-            image: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/Lingbao_Tianzun_White_Cloud_Temple_Beijing.jpg/300px-Lingbao_Tianzun_White_Cloud_Temple_Beijing.jpg",
-            baogao: "志心皈命禮。\n居上清境，七寶苑中。\n含天地未看之氣，養胎息於真黃。\n三天教主，萬法宗師。\n上清真境，靈寶天尊。",
-            desc: "【三清之二】全稱「上清真境靈寶天尊」。象徵「有」的開始，主宰大道的運化，傳授經籍法科。"
-        },
-        {
-            name: "道德天尊 (太上老君)",
-            image: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/Taishang_Laojun_White_Cloud_Temple_Beijing.jpg/300px-Taishang_Laojun_White_Cloud_Temple_Beijing.jpg",
-            baogao: "志心皈命禮。\n隨方設教，歷劫度人。\n為皇者師，帝者師，王者師，假名易號。\n立天之道，地之道，人之道，隱聖顯凡。\n總千二百之官君，包萬億重之梵炁。\n太上老君，道德天尊。",
-            desc: "【三清之三】全稱「太清境道德天尊」，即老子。是「道」的化身，為道教教主，傳下《道德經》教化世人。"
-        },
-        // --- 四御與高階天帝 ---
-        {
-            name: "玉皇大帝",
-            image: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/82/Jade_Emperor_Xiamen.jpg/300px-Jade_Emperor_Xiamen.jpg",
-            baogao: "志心皈命禮。\n太上彌羅無上天，妙有玄真境。\n渺渺紫金闕，太微玉清宮。\n無極無上聖，廓落發光明。\n寂寂浩無宗，玄範總十方。\n湛寂真常道，恢漠大神通。\n玉皇大天尊，玄穹高上帝。",
-            desc: "【萬天之主】簡稱「玉帝」、「天公」。統御諸天、綜領萬聖，主宰宇宙萬物的興衰與吉凶禍福，地位極其崇高。"
-        },
-        {
-            name: "紫微北極大帝",
-            image: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Ziwei_Dadi_White_Cloud_Temple_Beijing.jpg/300px-Ziwei_Dadi_White_Cloud_Temple_Beijing.jpg",
-            baogao: "志心皈命禮。\n大羅天闕，紫微星宮。\n尊居北極之高，位正中天之上。\n璇璣玉衡齊七政，總天經地緯。\n北極大帝，紫微帝君。",
-            desc: "【眾星之主】四御之一。統率北斗諸星及周天星辰，掌管人間帝王更替與生靈壽命。"
-        },
-        {
-            name: "勾陳上宮天皇大帝",
-            image: "", // 暫無穩定圖片，將顯示預設圖
-            baogao: "志心皈命禮。\n紫微宸極，勾陳天宮。\n位在北極，為萬星之主。\n佐玉皇而執掌天經地緯，統諸星而主持兵革之權。\n勾陳上宮，天皇大帝。",
-            desc: "【主兵革】四御之一。協助玉帝執掌南北兩極與天地人三才，並主宰人間的兵革戰爭之事。"
-        },
-         {
-            name: "后土皇地祇",
-            image: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/77/Houtu_White_Cloud_Temple_Beijing.jpg/300px-Houtu_White_Cloud_Temple_Beijing.jpg",
-            baogao: "志心皈命禮。\n九華玉闕，七寶皇房。\n承天稟命之期，主陰執陽之柄。\n道推尊而含弘光大，德數蓄而柔順剛健。\n掌山嶽土地之靈，主陰陽生育之氣。\n承天效法，后土皇地祇。",
-            desc: "【大地之母】四御之一。掌管大地山川、陰陽生育、萬物滋長。與天公相對，人稱「地母娘娘」。"
-        },
-        {
-            name: "南極長生大帝",
-            image: "", 
-             baogao: "志心皈命禮。\n高上神霄府，凝神煥照宮。\n會元始祖炁以分真，應妙道虛無而開化。\n位乎九天之上，統理諸天，總制萬靈。\n南極長生大帝，統天元聖天尊。",
-            desc: "【主壽考】四御之一。統御萬靈，主宰人間壽命禍福。"
-        },
-        // --- 諸天星君與先天大神 ---
-        {
-            name: "斗母元君",
-            image: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/49/Doumu_White_Cloud_Temple_Beijing.jpg/300px-Doumu_White_Cloud_Temple_Beijing.jpg",
-            baogao: "志心皈命禮。\n西天竺國，大智光中。\n真空妙相法王師，無上玄元天母主。\n金光爍處，日月潛輝。\n大悲大願，大聖大慈。\n圓明道母，天尊。",
-            desc: "【眾星之母】北斗眾星之母。三目四首八臂，掌管星辰與人的本命元辰。凡犯太歲者多禮拜斗母以求平安。"
-        },
-         {
-            name: "太乙救苦天尊",
-            image: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Taiyi_Jiuku_Tianzun_White_Cloud_Temple_Beijing.jpg/300px-Taiyi_Jiuku_Tianzun_White_Cloud_Temple_Beijing.jpg",
-            baogao: "志心皈命禮。\n青華長樂界，東極妙嚴宮。\n七寶芳騫林，九色蓮花座。\n萬真環拱內，百億瑞光中。\n玉清靈寶尊，應化玄元始。\n大悲大願，大聖大慈。\n太乙救苦天尊。",
-            desc: "【尋聲救苦】又稱東極青華大帝。誓願救度一切受苦眾生，能化身三界救苦，引渡亡魂往生東方長樂世界。"
-        },
-        {
-            name: "三官大帝 (天官、地官、水官)",
-            image: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/Sanguan_Dadi_White_Cloud_Temple_Beijing.jpg/300px-Sanguan_Dadi_White_Cloud_Temple_Beijing.jpg",
-            baogao: "(總誥) 志心皈命禮。\n唯三聖人，乃一太極。\n普受浩劫家之命，鼎膺無量品之褒。\n紫微清虛洞陰，總領功過。\n賜福赦罪解厄，普濟存亡。\n道冠諸天，恩覃三界。\n大悲大願，大聖大慈。\n三元三品，三官大帝，三宮九府感應天尊。",
-            desc: "【賜福赦罪解厄】俗稱「三界公」。天官賜福（上元節），地官赦罪（中元節），水官解厄（下元節）。掌管三界眾生功過。"
-        },
-        {
-            name: "雷聲普化天尊 (九天應元)",
-            image: "", 
-            baogao: "志心皈命禮。\n九天應元府，無上玉清王。\n化形而滿十方，談道而趺九鳳。\n三十六天之上，閱寶笈，考瓊書。\n千五百劫之先，位正真，權大化。\n手舉金光如意，宣說玉樞寶經。\n不順化作微塵，發號疾如風火。\n以清靜心而弘大願，以智慧而伏諸魔。\n總司五雷，運心三界。\n群生父，萬靈師。\n大聖大慈，至皇至道。\n九天應元雷聲普化天尊。",
-            desc: "【雷部最高神】統轄雷部諸神，主天之災福，持物之權衡，掌物掌人，司生司殺。"
-        },
-        // --- 著名護法與元帥 ---
-        {
-            name: "玄天上帝 (真武大帝)",
-            image: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Zhenwu_Statue_in_Wudang_Mountains_01.jpg/300px-Zhenwu_Statue_in_Wudang_Mountains_01.jpg",
-            baogao: "志心皈命禮。\n混元六天，傳法教主。\n修真悟道，濟度群迷。\n披髮仗劍，七星在手。\n鎮天助順，真武靈應。\n福德衍慶，仁慈正烈。\n治世福神，玉虛師相。\n玄天上帝，金闕化身，蕩魔天尊。",
-            desc: "【北方鎮守】又稱「上帝公」。統率三十六天將，鎮守北方，腳踏龜蛇，威猛無比，能掃除妖魔鬼怪。"
-        },
-        {
-            name: "王靈官 (王天君)",
-            image: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Wang_Lingguan_White_Cloud_Temple_Beijing.jpg/300px-Wang_Lingguan_White_Cloud_Temple_Beijing.jpg",
-            baogao: "志心皈命禮。\n先天主將，一炁神君。\n都天糾察大靈官，三界無私猛烈將。\n金睛朱髮，號三五火車雷公。\n鳳嘴銀牙，統百萬貔貅神將。\n三眼能觀天下事，一鞭驚醒世間人。\n太乙雷聲應化天尊。",
-            desc: "【道教第一護法】赤面三目，手持金鞭，鐵面無私。專司糾察善惡，鎮守道觀山門，有「三眼能觀天下事，一鞭驚醒世間人」之威名。"
-        },
-        {
-            name: "趙公明元帥 (玄壇真君)",
-            image: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Zhao_Gongming_White_Cloud_Temple_Beijing.jpg/300px-Zhao_Gongming_White_Cloud_Temple_Beijing.jpg",
-            baogao: "志心皈命禮。\n高上神霄，玉府大都督。\n五方巡察使，九州社令都大提點。\n掌定龍虎玄壇，金輪如意執法。\n黑面丹心，驅雷役電。\n正一玄壇，趙公明元帥。\n玄化財神天尊。",
-            desc: "【武財神】統領「招寶、納珍、招財、利市」四神。掌管世間財源，是民間最普遍供奉的武財神，護法同時帶來財運。"
-        },
-        {
-            name: "關聖帝君",
-            image: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/07/Guan_Yu_statue.jpg/300px-Guan_Yu_statue.jpg",
-            baogao: "志心皈命禮。\n太上神威，英文雄武。\n精忠大義，高節清廉。\n運協皇圖，德崇演正。\n掌儒釋道教之權，管天地人才之柄。\n萬靈萬神，至上至尊。\n伏魔大帝，關聖帝君。",
-            desc: "【協天伏魔】三教共尊的「武聖」。集忠、義、仁、勇於一身。職能極廣，包括驅魔、招財、治病、科考保佑等。"
-        },
-         {
-            name: "哪吒三太子 (中壇元帥)",
-            image: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7a/Nezha_Statue.jpg/300px-Nezha_Statue.jpg",
-            baogao: "志心皈命禮。\n興周聖將，滅紂前鋒。\n金光洞裏施法力，玉虛宮中修真性。\n騰雲駕霧，喚雨呼風。\n力降諸魔，收伏羣怪。\n變化多端，神威大顯。\n中壇元帥，太子元君。",
-            desc: "【五營主帥】統帥五營神兵神將，武藝高強，法力無邊。是道教重要的護法神，也是兒童的守護神。"
-        },
-        // --- 八仙與著名仙真 ---
-        {
-            name: "呂洞賓祖師 (純陽帝君)",
-            image: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bd/L%C3%BC_Dongbin_White_Cloud_Temple_Beijing.jpg/300px-L%C3%BC_Dongbin_White_Cloud_Temple_Beijing.jpg",
-            baogao: "志心皈命禮。\n玉清內相，金闕選仙。\n化身為三教之師，掌法判五雷之令。\n黃梁夢覺，忘世上之功名。\n寶劍光輝，掃人間之妖怪。\n大悲大願，大聖大慈。\n開山啟教，靈應祖師。\n天雷上相，純陽演正警化孚佑帝君。",
-            desc: "【八仙之首】全真道祖師。號純陽子，劍術高超，樂善好施，常雲遊人間濟世度人，民間傳說極多。"
-        },
-        {
-            name: "八仙群真",
-            image: "", // 暫用預設圖
-            baogao: "(總誥) 志心皈命禮。\n紫微帝闕，瑤池皆通。\n名標仙籍，位列碧霄。\n鐵拐李祖，鍾離祖師，呂祖洞賓，張祖果老，何祖仙姑，藍祖采和，韓祖湘子，曹祖國舅。\n八仙有慶，同處在世。\n大悲大願，大聖大慈。\n八大仙祖，無量度人。",
-            desc: "【逍遙神仙】包括鐵拐李、漢鍾離、呂洞賓、張果老、何仙姑、藍采和、韓湘子、曹國舅。象徵男女老幼、富貴貧賤皆可得道成仙。"
-        },
-        {
-            name: "張道陵天師 (正一真人)",
-            image: "", 
-            baogao: "志心皈命禮。\n本來南土，上溯蜀都。\n先獲黃帝九鼎之丹書，後事老君兩度于玉局。\n千軸得修真之要，一時成吐納之功。\n法籙全成，受盟威品而結璘訣。\n正一真人，三天扶教，大法天師。\n雷霆都省，泰玄上相，都天大法主。\n正一靜應顯佑真君，六合無窮高明大帝，降魔護道天尊。",
-            desc: "【道教創始人】東漢末年創立五斗米道（正一道），尊老子為教祖。被尊為「祖天師」，其後代世襲天師之位。"
-        },
-        // --- 民間常拜神祇 ---
-        {
-            name: "慈航真人 (觀音大士)",
-            image: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Guanyin_Statue_Nanshan.jpg/300px-Guanyin_Statue_Nanshan.jpg",
-            baogao: "志心皈命禮。\n莊王毓秀，受帝命而誕生；\n教闡南洋，奉敕旨而救劫。\n尋聲感應，動念垂慈。\n聖德昭彰，玄功莫測。\n大悲大願，大聖大慈。\n尋聲救苦救難，慈航普度天尊。",
-            desc: "【慈悲普度】即民間信仰之觀音菩薩。道教尊為「慈航普度天尊」。慈悲為懷，聞聲救苦，家家戶戶虔誠供奉。"
-        },
-        {
-            name: "天上聖母 (媽祖)",
-            image: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/Matsu_statue_in_Tainan_Grand_Matsu_Temple.jpg/300px-Matsu_statue_in_Tainan_Grand_Matsu_Temple.jpg",
-            baogao: "志心皈命禮。\n普陀勝境，興化湄州。\n聖德丕應，威靈遠震。\n受金人之傳授，通玉女之靈機。\n恩被蒼生，德覃海宇。\n大悲大願，大聖大慈。\n天后元君，天上聖母。",
-            desc: "【海神天后】原名林默娘。護佑航海平安，是沿海地區最重要的信仰，後發展為全能的守護神。"
-        },
-        {
-            name: "文昌帝君",
-            image: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Wenchang_Wang_White_Cloud_Temple_Beijing.jpg/300px-Wenchang_Wang_White_Cloud_Temple_Beijing.jpg",
-            baogao: "志心皈命禮。\n不驕帝境，玉真慶宮。\n現九十八化之行藏，顯億千萬種之神異。\n飛鸞開化於在在，如意救劫以生生。\n至孝至仁，至聖至神。\n參元達化，更生永命天尊。",
-            desc: "【文運之神】掌管士人功名祿位。學子考試必拜，祈求金榜題名、智慧開竅。"
-        },
-        {
-            name: "福德正神 (土地公)",
-            image: "", 
-            baogao: "志心皈命禮。\n一方土穀，萬姓福神。\n秉忠正烈，助國衛民。\n膺承簡命，鎮一方而黎庶仰瞻。\n司職功曹，掌傳達而丹忱上達。\n義貫九天，堅貞一念。\n護國佑民，大喜大捨。\n福德正神，太上加封，土穀尊神。",
-            desc: "【地方守護】最基層的神明，掌管一方土地與農作，也是地方的財神與守護者，和藹可親。"
-        },
-         {
-            name: "城隍爺",
-            image: "", 
-            baogao: "志心皈命禮。\n社稷古神，兼管陰陽。\n察民間之善惡，理幽冥之禍福。\n賞善罰惡，報應昭昭。\n燮理陰陽，權衡生死。\n大悲大願，大聖大慈。\n威靈顯應，城隍尊神。",
-            desc: "【陰陽總管】城市的守護神，兼管陰陽兩界，職掌紀錄轄區內人民的善惡功過，審判亡魂。"
-        },
-        {
-            name: "月下老人",
-            image: "",
-            baogao: "志心皈命禮。\n團圓月下，相思樹底。\n定生民之姻緣，繫天下之紅線。\n配偶得成，冤家債主。\n化解化解，前生註定。\n大悲大願，大聖大慈。\n月下老人，合婚聯姻天尊。",
-            desc: "【掌管姻緣】手執紅線，專門掌管男女姻緣的神仙。祈求良緣者必拜。"
-        },
-        {
-            name: "註生娘娘",
-            image: "",
-            baogao: "志心皈命禮。\n斗口靈官，掌管註生。\n注定胎孕，保佑產難。\n送子送孫，衍傳宗社。\n大悲大願，大聖大慈。\n註生娘娘，衛房聖母元君。",
-            desc: "【掌管生育】主宰婦女懷孕、生產與幼兒健康的神靈。求子或祈求生產順利者虔誠供奉。"
-        }
-        // 您可以在此繼續添加更多神仙...
-    ];
+     const deities = [
+            // --- 三清道祖 ---
+            {
+                name: "元始天尊 (玉清寶誥)",
+                image: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Yuanshi_Tianzun_White_Cloud_Temple_Beijing.jpg/300px-Yuanshi_Tianzun_White_Cloud_Temple_Beijing.jpg",
+                baogao: "玉界之上，梵炁彌羅。\n上極無上，天中之天。\n郁羅蕭台，玉山上京。\n渺渺金闕，森羅淨泓。\n玄元一炁，混沌之先。\n寶珠之中，玄之又玄。\n開明天景，化生諸天。\n億萬天真，無鞅數眾。\n旋斗歷箕，回度五常。\n巍巍大範，萬道之宗。\n大羅玉清，虛無自然。\n至真妙道，元始天尊。",
+                desc: "【三清之首】全稱「玉清聖境虛無自然元始天尊」。象徵天地未形、混沌未開之前的「無極」狀態，是宇宙大道的源頭。"
+            },
+            {
+                name: "靈寶天尊 (上清寶誥)",
+                image: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/Lingbao_Tianzun_White_Cloud_Temple_Beijing.jpg/300px-Lingbao_Tianzun_White_Cloud_Temple_Beijing.jpg",
+                baogao: "居上清境，號靈寶君。\n祖劫化生，九萬九千餘梵炁。\n赤書煥發，六百六十八真文。\n因混沌赤文而開九霄。\n紀元洞玉歷而分五劫。\n天經地緯，巍乎造化之宗。\n樞陰機陽，卓爾雷霆之祖。\n大悲大願，大聖大慈。\n玉宸道君，靈寶天尊。",
+                desc: "【三清之二】全稱「上清真境靈寶天尊」。象徵「有」的開始，主宰大道的運化，傳授經籍法科。"
+            },
+            {
+                name: "道德天尊 (太清寶誥)",
+                image: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/Taishang_Laojun_White_Cloud_Temple_Beijing.jpg/300px-Taishang_Laojun_White_Cloud_Temple_Beijing.jpg",
+                baogao: "隨方設教，歷劫度人。\n為皇者師，帝者師，王者師，假名易號。\n立天之道，地之道，人之道，隱聖顯凡。\n總千二百之官君。\n包萬億重之梵炁。\n化行今古，著道德凡五千言。\n主握陰陽，命雷霆用九五數。\n大悲大願，大聖大慈。\n太上老君，道德天尊。",
+                desc: "【三清之三】全稱「太清境道德天尊」，即老子。是「道」的化身，為道教教主，傳下《道德經》教化世人。"
+            },
 
+            // --- 四御與高階天帝 ---
+            {
+                name: "玉皇大帝 (彌羅寶誥)",
+                image: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/82/Jade_Emperor_Xiamen.jpg/300px-Jade_Emperor_Xiamen.jpg",
+                baogao: "太上彌羅無上天，妙有玄真境。\n渺渺紫金闕，太微玉清宮。\n無極無上聖，廓落發光明。\n寂寂浩無宗，玄範總十方。\n湛寂真常道，恢漠大神通。\n玉皇大天尊，玄穹高上帝。",
+                desc: "【萬天之主】簡稱「玉帝」、「天公」。統御諸天、綜領萬聖，主宰宇宙萬物的興衰與吉凶禍福。"
+            },
+            {
+                name: "勾陳天皇大帝 (天皇寶誥)",
+                image: "",
+                baogao: "紫微宸極，勾陳天宮。\n九光寶苑之中，五炁玄都之上。\n體元皇而佐司玄化，總兩極而共理三才。\n主持兵革之權衡，廣推大德。\n統御星辰之纏次，毋失常經。\n上象巍峨，真元恢漠。\n大悲大願，大聖大慈。\n勾陳上宮，天皇大帝。",
+                desc: "【主兵革】四御之一。協助玉帝執掌南北兩極與天地人三才，並主宰人間兵革戰爭之事。"
+            },
+            {
+                name: "紫微北極大帝 (星主寶誥)",
+                image: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Ziwei_Dadi_White_Cloud_Temple_Beijing.jpg/300px-Ziwei_Dadi_White_Cloud_Temple_Beijing.jpg",
+                baogao: "大羅天闕，紫微星宮。\n尊居北極之高，位正中天之上。\n法號金輪熾盛，道稱玉斗玄尊。\n璇璣玉衡齊七政，總天經地緯；\n日月星宿約四時，行黃道紫垣。\n萬象宗師，諸天統御。\n大悲大願，大聖大慈。\n萬星教主，無極元皇，中天紫微，北極大帝。",
+                desc: "【眾星之主】四御之一。統率北斗諸星及周天星辰，掌管人間帝王更替與生靈壽命。"
+            },
+            {
+                name: "後土皇地祇 (後土寶誥)",
+                image: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/77/Houtu_White_Cloud_Temple_Beijing.jpg/300px-Houtu_White_Cloud_Temple_Beijing.jpg",
+                baogao: "九華玉闕，七寶皇房。\n承天稟命之期，主執陰陽之柄。\n道推尊而含弘光大，德數蓄於柔順利貞。\n效法昊天，根本育坤元之美；\n流形品物，生成施母道之仁。\n岳瀆是依，山川成仗。\n大悲大願，大聖大慈。\n承天效法，後土皇地祗。",
+                desc: "【大地之母】四御之一。掌管大地山川、陰陽生育、萬物滋長。與天公相對，尊稱「地母娘娘」。"
+            },
+            {
+                name: "南極長生大帝 (南極寶誥)",
+                image: "",
+                baogao: "高上神霄府，凝神煥照宮。\n會元始祖炁以分真，應妙道虛無而開化。\n位乎九霄之上，統理諸天；\n總乎十極之中，宰制萬化。\n宣金符而垂光濟苦，施惠澤而覆育兆民。\n恩溥乾元，仁敷浩劫。\n大悲大願，大聖大慈。\n玉清真王，南極長生大帝，統天元聖天尊。",
+                desc: "【主壽考】四御之一。統御萬靈，主宰人間壽命禍福與福壽延綿。"
+            },
+
+            // --- 先天大神與諸天星君 ---
+            {
+                name: "斗姥元君 (斗姥寶誥)",
+                image: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/49/Doumu_White_Cloud_Temple_Beijing.jpg/300px-Doumu_White_Cloud_Temple_Beijing.jpg",
+                baogao: "西天竺國，大智光中。\n真空妙相法王師，無上玄元天母主。\n金光爍處，日月潛輝。\n寶杵旋時，鬼神失色。\n顯靈蹤於塵世，衛聖駕於閻浮。\n眾生有難若稱名，大士尋聲來救苦。\n大悲大願，大聖大慈。\n聖德巨光天後，摩利支天大聖，圓明道姥天尊。",
+                desc: "【眾星之母】北斗眾星之母，掌管星辰與人的本命元辰。凡犯太歲者多禮拜斗姥元君以求平安。"
+            },
+            {
+                name: "太乙救苦天尊 (太乙寶誥)",
+                image: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Taiyi_Jiuku_Tianzun_White_Cloud_Temple_Beijing.jpg/300px-Taiyi_Jiuku_Tianzun_White_Cloud_Temple_Beijing.jpg",
+                baogao: "青華長樂界，東極妙嚴宮。\n七寶芳騫林，九色蓮花座。\n萬真環拱內，百億瑞光中。\n玉清靈寶尊，應化玄元始。\n浩劫垂慈濟，大千甘露門。\n妙道真身，紫金瑞相。\n隨機赴感，誓願無邊。\n大聖大慈，大悲大願。\n十方化號，普渡眾生。\n億億劫中，度人無量。\n尋聲赴感，太乙救苦天尊。",
+                desc: "【尋聲救苦】又稱東極青華大帝。誓願救度一切受苦眾生，能化身三界救苦，引渡亡魂往生東方長樂世界。"
+            },
+            {
+                name: "九天應元雷聲普化天尊 (雷祖寶誥)",
+                image: "",
+                baogao: "九天應元府，無上玉清王。\n化形而滿十方，談道而趺九鳳。\n三十六天之上，閱寶笈，考瓊書。\n千五百劫之先，位正真，權大化。\n手舉金光如意，宣說玉樞寶經。\n不順化作微塵，發號疾如風火。\n以清靜心而弘大願，以智慧而伏諸魔。\n總司五雷，運心三界。\n群生父，萬靈師。\n大聖大慈，至皇至道。\n九天應元雷聲普化天尊。",
+                desc: "【雷部最高神】統轄雷部諸神，主天之災福，持物之權衡，掌物掌人，司生司殺。"
+            },
+            {
+                name: "三官大帝 (三官寶誥)",
+                image: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/Sanguan_Dadi_White_Cloud_Temple_Beijing.jpg/300px-Sanguan_Dadi_White_Cloud_Temple_Beijing.jpg",
+                baogao: "唯三聖人，乃一太極。\n普受浩劫家之命，鼎膺無量品之褒。\n紫微清虛洞陰，總領功過，\n賜福赦罪解厄，普濟存亡。\n道冠諸天，恩覃三界。\n大悲大願，大聖大慈。\n三元三品三官大帝，三官九府應感天尊。",
+                desc: "【賜福赦罪解厄】俗稱「三界公」。天官賜福（上元），地官赦罪（中元），水官解厄（下元）。掌管三界眾生功過。"
+            },
+
+            // --- 護法神靈與宗師 ---
+            {
+                name: "玄天上帝 (玄天寶誥)",
+                image: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Zhenwu_Statue_in_Wudang_Mountains_01.jpg/300px-Zhenwu_Statue_in_Wudang_Mountains_01.jpg",
+                baogao: "混元六天，傳法教主。\n修真悟道，濟度群迷。\n普為眾生，消除災障。\n八十二化，三教祖師。\n大慈大悲，救苦救難。\n三元都總管，九天遊奕使。\n佐天罡北極，右垣大將軍。\n鎮天助順，真武靈應，福德衍慶，仁慈正烈。\n協運真君，治世福神，玉虛師相，玄天上帝，金闕化身，蕩魔天尊。",
+                desc: "【北方鎮守】又稱「真武大帝」、「上帝公」。鎮守北方，腳踏龜蛇，威猛無比，能掃除妖魔鬼怪。"
+            },
+            {
+                name: "張道陵天師 (祖天師寶誥)",
+                image: "",
+                baogao: "本來南土，上溯蜀都。\n先獲黃帝九鼎之丹書，後侍老君兩度於玉局。\n千軸得修真之要，一時成吐納之功。\n法籙全成，受盟威品而結璘訣。\n正邪兩辨，奪福庭治而化咸泉。\n德就大丹，道齊七政。\n大悲大願，大聖大慈。\n三天扶教，輔玄體道。\n大法天師，雷霆都省，泰玄上相，都天大法主，正一沖玄神化靜應顯佑真君，六合無窮高明大帝，降魔護道天尊。",
+                desc: "【道教創始人】東漢末年創立正一道（五斗米道），尊老子為教祖。被尊為「祖天師」。"
+            },
+            {
+                name: "呂純陽祖師 (呂祖寶誥)",
+                image: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bd/L%C3%BC_Dongbin_White_Cloud_Temple_Beijing.jpg/300px-L%C3%BC_Dongbin_White_Cloud_Temple_Beijing.jpg",
+                baogao: "玉清內相，金闕選仙。\n化身為三教之師，掌法判五雷之令。\n黃粱夢覺，忘世上之功名；\n寶劍光輝，掃人間之妖怪。\n四生六道，有感必敷；\n三界十方，無求不應。\n黃鶴樓頭留聖跡，玉清殿內煉丹砂。\n存芝像於丹崖，顯仙蹤於玄洞。\n闡法門之香火，為後嗣之梯航。\n大聖大慈，大仁大孝。\n開山啟教，靈應祖師。\n天雷上相，靈寶真人，純陽演政警化孚佑帝君，興行妙道天尊。",
+                desc: "【八仙之首】全真道祖師，號純陽子。劍術高超，常雲遊人間濟世度人。"
+            },
+            {
+                name: "薩守堅真人 (薩祖寶誥)",
+                image: "",
+                baogao: "派流西蜀，跡顯龍興。\n施財合藥濟群生，積行累功修至道。\n授鐵師之教旨，掌玉府之雷書。\n身披百衲伏魔衣，手執五明降鬼扇。\n代天宣化，咒棗書符。\n運風雷於咫尺之間，剪妖魔於斗罡之下。\n道參太極，位列仙班。\n松筠野鶴任縱橫，遐邇孤雲常自在。\n方方闡教，為萬法之宗師；\n處處開壇，作後人之模範。\n都天宗主，一元無上薩翁真君，玄風永振天尊。",
+                desc: "【四大天師】宋代著名高道，號全陽子。精通雷法，咒棗書符，救濟貧苦。"
+            },
+            {
+                name: "王靈官天君 (王靈官寶誥)",
+                image: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Wang_Lingguan_White_Cloud_Temple_Beijing.jpg/300px-Wang_Lingguan_White_Cloud_Temple_Beijing.jpg",
+                baogao: "先天主將，一炁神君。\n都天糾罰大靈官，三界無私猛吏將。\n金睛朱發，號三五火車雷公；\n鳳嘴銀牙，統百萬貔貅神將。\n飛騰雲霧，號令雷霆。\n降雨開晴，驅邪治病。\n觀過錯於一十二年，受命玉帝；\n積功勛於百千萬種，誓佐祖師。\n至剛至勇，濟死濟生。\n方方闡教，處處開壇。\n豁落猛吏，三五火車，太乙雷神應仙天尊。",
+                desc: "【道教第一護法】赤面三目，手持金鞭，鐵面無私。專司糾察善惡，鎮守道觀山門。"
+            },
+
+            // --- 仙真與門派祖師 ---
+            {
+                name: "全真北五祖 (北五祖寶誥)",
+                image: "",
+                baogao: "大道開先，玄元闡化。\n教垂今古，諡號東華。\n接漢室之將軍，隱終南而仙契，過化每超於劫運。\n示現長在於塵寰，啟唐朝之英賢，悟神仙之秘訣，飛劍貨藥。\n警化無方，金廷丞相之高標，寶印力辭之勇訣。\n霞裾上陟，南北統宗，天複挺於人豪，道遍通於四海。\n發金蓮之七朵，演仙派於十方，長生理被於古今。\n玄妙天垂於率土，恢弘至道，廣度愚迷，慈悲濟苦，全真祖師。\n東華紫府，輔元立極大道帝君、正陽開悟傳道垂教帝君、純陽演正警化孚佑帝君、海蟾明悟弘道純佑帝君、重陽全真開化極輔帝君，五祖闡道天尊。",
+                desc: "【全真派五祖】指王玄甫（東華帝君）、鍾離權（正陽帝君）、呂洞賓（純陽帝君）、劉海蟾（海蟾帝君）、王重陽（重陽帝君）。"
+            },
+            {
+                name: "全真南五祖 (南五祖寶誥)",
+                image: "",
+                baogao: "明真正道，行化南天。\n九皇降跡於天台，一脈浚通於劉祖。\n採瓊花之仙異，著悟道之丹書。\n道付杏林，不日還元之編集。\n法通雞足，丹髓復命之書成。\n真人挺出惠州，信地悟超神俊。\n刀圭入口，神化無方。\n施雷雨於掌中，更生民於世外。\n德彰南海，獲瓊玉之英標；\n道遍遐荒，饫法言之靈妙。\n龍虎羅浮之跡，武夷玉隆之書，過化多方，真文備著。\n為群仙之首冠，集前代之範模。\n誓願宏深，慈悲仁聖祖師。\n悟真紫陽真人、杏林翠玄真人、道光紫賢真人、泥丸翠虛真人、瓊管紫清真人，五祖藏道天尊。",
+                desc: "【內丹南宗五祖】張伯端（紫陽）、石泰（杏林）、薛道光（紫賢）、陳楠（泥丸）、白玉蟾（紫清）。"
+            },
+            {
+                name: "全真七真 (七真寶誥)",
+                image: "",
+                baogao: "道先一炁，世顯七真。\n悟五行不到之言，得九轉還丹之訣。\n甘泉潤物，變朽回春。\n金骨仙姿，得四言而契道；\n衛州變化，坐十載以成真。\n壁間墨跡以非凡，雪竹月松之姿異。\n三井有多生之記，一時著顯化之功。\n磻溪六年，龍門七載。\n道功備而名聞時主，丹符錫而掌握神仙。\n石上談玄，空中飛蓋。\n元主屢宣而問道，甘霖刻日以濟民。\n早窮易道之言，晚造神仙之訣，卦圖斯演，至道大成。\n清靜散人，探玄得道。\n蓬萊仙路，億劫獨持。\n慈悲救苦，全真祖師。\n丹陽抱一無為普化真君、長真凝神玄靜蘊德真君、長生輔化宗玄明德真君、長春全德神化明應主教真君、玉陽體玄廣慈普度真君、太古廣寧通玄妙極真君、清靜淵真玄虛順化元君，七真演化天尊。",
+                desc: "【重陽七黠】馬鈺（丹陽）、譚處端（長真）、劉處玄（長生）、丘處機（長春）、王處一（玉陽）、郝大通（太古）、孫不二（清靜散人）。"
+            },
+            {
+                name: "報恩寶誥",
+                image: "",
+                baogao: "玄元應化，武曲分真。\n垂念我等眾生，有相脫生。\n父母懷胎十月，乳哺三年，辛苦百千，殷勤寸念。\n憐我父母，日漸衰朽。\n我今持念平等，悉滅險峻貪嗔。\n禮帝為師，祈恩報本。\n願現在父母福壽增延，過去宗祖早得超生。\n大聖大慈，大仁大孝。\n八十二化，報恩教主。",
+                desc: "【孝道報恩】道教感念父母養育之恩、祈求父母福壽綿長與祖先超昇之重要寶誥。"
+            },
+
+            // --- 民間常見神祇 ---
+            {
+                name: "趙公明元帥 (玄壇真君)",
+                image: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Zhao_Gongming_White_Cloud_Temple_Beijing.jpg/300px-Zhao_Gongming_White_Cloud_Temple_Beijing.jpg",
+                baogao: "高上神霄，玉府大都督。\n五方巡察使，九州社令都大提點。\n掌定龍虎玄壇，金輪如意執法。\n黑面丹心，驅雷役電。\n正一玄壇，趙公明元帥。\n玄化財神天尊。",
+                desc: "【武財神】統領招寶、納珍、招財、利市四神，掌管世間財源。"
+            },
+            {
+                name: "關聖帝君",
+                image: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/07/Guan_Yu_statue.jpg/300px-Guan_Yu_statue.jpg",
+                baogao: "太上神威，英文雄武。\n精忠大義，高節清廉。\n運協皇圖，德崇演正。\n掌儒釋道教之權，管天地人才之柄。\n萬靈萬神，至上至尊。\n伏魔大帝，關聖帝君。",
+                desc: "【協天伏魔】三教共尊之「武聖」。集忠義仁勇於一身，職能涵蓋驅魔、招財、治病、科考等。"
+            },
+            {
+                name: "慈航真人 (觀音大士)",
+                image: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Guanyin_Statue_Nanshan.jpg/300px-Guanyin_Statue_Nanshan.jpg",
+                baogao: "莊王毓秀，受帝命而誕生；\n教闡南洋，奉敕旨而救劫。\n尋聲感應，動念垂慈。\n聖德昭彰，玄功莫測。\n大悲大願，大聖大慈。\n尋聲救苦救難，慈航普度天尊。",
+                desc: "【慈悲普度】即民間信仰之觀音菩薩，道教尊為「慈航普度天尊」。"
+            },
+            {
+                name: "天上聖母 (媽祖)",
+                image: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/Matsu_statue_in_Tainan_Grand_Matsu_Temple.jpg/300px-Matsu_statue_in_Tainan_Grand_Matsu_Temple.jpg",
+                baogao: "普陀勝境，興化湄州。\n聖德丕應，威靈遠震。\n受金人之傳授，通玉女之靈機。\n恩被蒼生，德覃海宇。\n大悲大願，大聖大慈。\n天後元君，天上聖母。",
+                desc: "【海神天後】護佑航海平安，為沿海地區最重要的守護神。"
+            },
+            {
+                name: "文昌帝君",
+                image: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Wenchang_Wang_White_Cloud_Temple_Beijing.jpg/300px-Wenchang_Wang_White_Cloud_Temple_Beijing.jpg",
+                baogao: "不驕帝境，玉真慶宮。\n現九十八化之行藏，顯億千萬種之神異。\n飛鸞開化於在在，如意救劫以生生。\n至孝至仁，至聖至神。\n參元達化，更生永命天尊。",
+                desc: "【文運之神】掌管士人功名祿位，學子考試必拜。"
+            },
+            {
+                name: "福德正神 (土地公)",
+                image: "",
+                baogao: "一方土穀，萬姓福神。\n秉忠正烈，助國衛民。\n膺承簡命，鎮一方而黎庶仰瞻。\n司職功曹，掌傳達而丹忱上達。\n義貫九天，堅貞一念。\n護國佑民，大喜大捨。\n福德正神，太上加封，土穀尊神。",
+                desc: "【地方守護】基層神靈，掌管一方土地與農作，亦為地方財神。"
+            }
+        ];
     // --- 程式邏輯區 ---
 
     const grid = document.getElementById('deityGrid');
