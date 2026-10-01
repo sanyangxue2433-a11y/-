@@ -119,7 +119,6 @@
             transition: transform 0.5s;
         }
         
-        /* 圖片讀取失敗時的替換樣式 */
         .card img.error-fallback {
              object-fit: contain;
              padding: 40px;
@@ -138,7 +137,6 @@
             font-weight: bold;
         }
 
-        /* 彈出視窗 */
         .modal {
             display: none;
             position: fixed;
@@ -149,7 +147,7 @@
             height: 100%;
             background-color: rgba(0,0,0,0.75);
             backdrop-filter: blur(3px);
-            overflow-y: auto; /* 允許視窗本身滾動 */
+            overflow-y: auto;
         }
 
         .modal-content {
@@ -207,8 +205,8 @@
             padding: 30px;
             line-height: 1.9;
             font-size: 1.1rem;
-            max-height: 80vh; /* 設定最大高度 */
-            overflow-y: auto; /* 內容過長時出現卷軸 */
+            max-height: 80vh;
+            overflow-y: auto;
         }
 
         .modal-img-box {
@@ -233,8 +231,8 @@
             border-left: 6px solid var(--secondary-color);
             margin: 25px 0;
             font-weight: 500;
-            white-space: pre-wrap; /* 保留換行格式 */
-            font-family: "KaiTi", "楷体", serif; /* 寶誥用楷體更莊嚴 */
+            white-space: pre-wrap;
+            font-family: "KaiTi", "楷体", serif;
             font-size: 1.2rem;
             color: #5a4a00;
             box-shadow: inset 0 0 10px rgba(212, 175, 55, 0.1);
@@ -250,7 +248,6 @@
             display: inline-block;
         }
         
-        /* 卷軸美化 */
         ::-webkit-scrollbar {
             width: 10px;
         }
@@ -271,7 +268,7 @@
             .card img { height: 200px; }
             .modal-content { width: 100%; margin: 0; border-radius: 0; height: 100%; max-width: none;}
             .modal-body { max-height: none; padding: 20px; }
-             .close { right: 15px; top: 15px; color: white;}
+            .close { right: 15px; top: 15px; color: white;}
         }
     </style>
 </head>
@@ -286,8 +283,7 @@
     <input type="text" id="searchInput" placeholder="在此輸入神仙名號或關鍵字搜尋 (例如: 財神, 觀音, 文昌, 雷神)...">
 </div>
 
-<div class="grid-container" id="deityGrid">
-    </div>
+<div class="grid-container" id="deityGrid"></div>
 
 <div id="deityModal" class="modal">
     <div class="modal-content">
@@ -301,24 +297,20 @@
             </div>
 
             <h3 class="section-title">寶誥</h3>
-            <div class="baogao-box" id="modalBaogao">
-                </div>
+            <div class="baogao-box" id="modalBaogao"></div>
 
             <h3 class="section-title">聖紀簡介</h3>
-            <div id="modalDesc">
-                </div>
+            <div id="modalDesc"></div>
         </div>
     </div>
 </div>
 
 <script>
-    // 預設的替代圖片 (當神像圖讀取失敗時顯示這個)
-    // 這裡使用一個公開的太極圖案作為範例
     const FALLBACK_IMAGE = "https://upload.wikimedia.org/wikipedia/commons/thumb/1/17/Yin_yang.svg/200px-Yin_yang.svg.png";
 
-    // --- 超大型神仙資料庫 (約40位核心神祇) ---
-     const deities = [
-           {
+    // 完整神仙資料庫 (共138位神祇)
+    const deities = [
+  {
     "name": "玉清寶誥",
     "image": "",
     "baogao": "玉界之上，梵炁彌羅。上極無上，天中之天。\n郁羅蕭台，玉山上京。渺渺金闕，森羅淨泓。\n玄元一炁，混沌之先。寶珠之中，玄之又玄。\n開明天景，化生諸天。億萬天真，無鞅數眾。\n旋斗歷箕，回度五常。巍巍大範，萬道之宗。\n大羅玉清，虛無自然。至真妙道，元始天尊。",
@@ -336,6 +328,12 @@
     "baogao": "隨方設教，歷劫度人。\n為皇者師，帝者師，王者師，假名易號。\n立天之道，地之道，人之道，隱聖顯凡。\n總千二百之官君。包萬億重之梵炁。\n化行今古，著道德凡五千言。\n主握陰陽，命雷霆用九五數。\n大悲大願，大聖大慈。\n太上老君，道德天尊。",
     "desc": "【三清之一】太上老君（道德天尊）寶誥，隨方設教、歷劫度人。"
   },
+  {
+  "name": "西王母寶誥",
+  "image": "",
+  "baogao": "天池開泰，無極聖母。\n龍華勝會宴瑤池，萬靈統御傳教旨。\n諸仙獻壽，列聖稱觴。\n天威咫尺，功高德重。\n代燮權衡，仙主道宗。\n三千侍女，奏笙簧之天樂；\n百歲蟠桃，開金碧之靈園。\n救眾生之苦難，灑甘露於塵寰。\n大悲大願，大聖大慈。\n無極瑤池大聖西王母天尊。\n\n又誥：\n靈鐘神州，聲馳閬苑。\n托體庚辛之鄉，沐浴壬癸之境。\n玉樓重重，不數巫山十二；\n翠水疊疊，能教桃熟三千。\n清虛標徵實之奇，坤順轄乾陽之柄。\n五老與為周旋，八洞時承懿旨。\n飛鸞開化乎女宗，駕鶴談玄於淨土。\n克推仙祖，允司婦儀。\n大悲大願，至玄至仁。\n西華清靈金母，宏慈太妙無上元君。",
+  "desc": "【女仙之首】西王母（瑤池金母）寶誥，萬靈統御，仙主道宗。"
+ },
   {
     "name": "彌羅寶誥",
     "image": "",
@@ -375,7 +373,7 @@
   {
     "name": "南五祖寶誥",
     "image": "",
-    "baogao": "明真正道，行化南天。\n九皇降跡於天台，一脈浚通於劉祖。\n採瓊花之仙異，著悟道之丹書。\n道付杏林，不日還元之編集。\n法通雞足，丹髓復命之書成。\n真人挺出惠州，信地悟超神俊。\n刀圭入口，神化無方。\n施雷雨於掌中，更生民於世外。\n德彰南海，獲瓊玉之英標；\n道遍遐荒，饫法言之靈妙。\n龍虎羅浮之跡，武夷玉隆之書，過化多方，真文備著。\n為群仙之首冠，集前代之範模。\n誓願宏深，慈悲仁聖祖師。\n悟真紫陽真人、杏林翠玄真人、道光紫賢真人、泥丸翠虛真人、瓊管紫清真人，五祖藏道天尊。",
+    "baogao": "明真正道，行化南天。\n九皇降跡於天台，一脈浚通於劉祖。\n採瓊花之仙異，著悟道之丹書。\n道付杏林，不日還元之編輯。\n法通雞足，丹髓復命之書成。\n真人挺出惠州，信地悟超神俊。\n刀圭入口，神化無方。\n施雷雨於掌中，更生民於世外。\n德彰南海，獲瓊玉之英標；\n道遍遐荒，饫法言之靈妙。\n龍虎羅浮之跡，武夷玉隆之書，過化多方，真文備著。\n為群仙之首冠，集前代之範模。\n誓願宏深，慈悲仁聖祖師。\n悟真紫陽真人、杏林翠玄真人、道光紫賢真人、泥丸翠虛真人、瓊管紫清真人，五祖藏道天尊。",
     "desc": "【全真南宗】南五祖總誥，尊奉張紫陽、石杏林、薛道光、陳泥丸、白玉蟾五位祖師。"
   },
   {
@@ -435,7 +433,7 @@
   {
     "name": "太乙寶誥",
     "image": "",
-    "baogao": "青華長樂界，東極妙嚴宮。\n七寶芳騫林，九色蓮花座。\n萬真環拱內，百億瑞光中。\n玉清靈寶尊，應化玄元始。\n浩劫垂慈濟，大千甘露門。\n妙道真身，紫金瑞相。\n隨機赴感，誓願無邊。\n大聖大慈，大悲大願。\n十方化號，普渡眾生。\n億億劫中，度人無量。\n尋聲赴感，太乙救苦天尊。",
+    "baogao": "青華長樂界，東極妙嚴宮。\n七寶芳騫林，九色蓮花座。\n萬真環拱內，百億瑞光中。\n玉清靈寶尊，應化玄元始。\n浩劫垂慈濟，大千甘露門。\n妙道真身，紫金瑞相。\n隨機赴感，誓願無邊。\n大悲大願，大聖大慈。\n十方化號，普渡眾生。\n億億劫中，度人無量。\n尋聲赴感，太乙救苦天尊。",
     "desc": "【救苦天尊】太乙救苦天尊寶誥，尋聲赴感、普渡眾生。"
   },
   {
@@ -709,7 +707,7 @@
     "desc": "【龍門派祖】丘處機長春真人寶誥，止殺救生，全真演教。"
   },
   {
-    "name": "清淨元君寶誥（一）",
+    "name": "清靜元君寶誥（一）",
     "image": "",
     "baogao": "青霞繼派，巾幗宗工。\n生傳一鶴入抱之祥，長適三髻聚頂之配。\n棄家弗顧，不作兒女之悲；\n別洞只修，但篤煙雲之好。\n始得重陽之開示，繼從丹陽以琢磨。\n先了證夫玄丹，乃超升乎羽俗。\n何姥為之提攜，麻姑與為伯仲。\n大悲大願，大聖大慈。\n全真體教，清靜慧悟上仙，女師領派元君。",
     "desc": "【清靜派祖】孫不二清淨元君寶誥，全真女仙之首。"
@@ -1017,7 +1015,7 @@
   {
     "name": "紫陽真人張祖誥",
     "image": "",
-    "baogao": "南邦啟教，浙水流芳。\n幼肄業於辟雍，無書弗讀；\n晚浪遊於雲水，遇道皆參。\n得諦於海蟾帝主，修真於漢陰山中。\n始則樂育情殷，繼則忘言遁世。\n袖出瓊花，羨陽神之克折；\n身懷異寶，愛捨利之偏多。\n戒僧為之減色，處厚因之從風。\n悟真篇諸真妙諦，羅浮嶺自在逍遙。\n大悲大願，大聖大慈。\n紫陽少府，天台啟派真君，廣慈立極天尊。",
+    "baogao": "南邦啟教，浙水流芳。\n幼肄業於辟雍，無書弗讀；\n晚浪遊於雲水，遇道皆參。\n得諦於海蟾帝主，修真於漢陰山中。\n始則樂育情殷，繼則忘言遁世。\n袖出瓊花，羨陽神之克折；\n身懷異寶，愛捨利之偏多。\n戒僧為之減色，處厚因之從風。\n悟真篇諸真妙諦，羅府嶺自在逍遙。\n大悲大願，大聖大慈。\n紫陽少府，天台啟派真君，廣慈立極天尊。",
     "desc": "【南宗祖師】張伯端（張紫陽）寶誥，著《悟真篇》。"
   },
   {
@@ -1107,7 +1105,7 @@
   {
     "name": "南五祖總誥",
     "image": "",
-    "baogao": "明真正道，行化南天。\n九皇降跡於天台，一脈浚通於劉祖。\n採瓊花之仙異，著悟真之丹書。\n道付杏林，不日還元之編集；\n法通雞足，俞琰丹髓之書成。\n真人挺出惠州，信地悟超神俊。\n刀圭入口，神化無方。\n施雷雨於掌中，蘇生民於世外。\n德彰南海，獲瓊玉之英標；\n道遍遐荒，饫法言之靈妙。\n龍虎羅浮之跡，武夷玉隆之書，過化多方，真文備著。\n為神仙之首冠，集前代之範模。\n誓願弘深，慈悲仁聖祖師。\n悟真紫陽真人、杏林翠玄真人、道光紫賢真人、泥丸翠虛真人、瓊管紫清真人，五祖蒇道天尊。",
+    "baogao": "明真正道，行化南天。\n九皇降跡於天台，一脈浚通於劉祖。\n採瓊花之仙異，著悟真之丹書。\n道付杏林，不日還元之編輯；\n法通雞足，俞琰丹髓之書成。\n真人挺出惠州，信地悟超神俊。\n刀圭入口，神化無方。\n施雷雨於掌中，蘇生民於世外。\n德彰南海，獲瓊玉之英標；\n道遍遐荒，饫法言之靈妙。\n龍虎羅浮之跡，武夷玉隆之書，過化多方，真文備著。\n為神仙之首冠，集前代之範模。\n誓願弘深，慈悲仁聖祖師。\n悟真紫陽真人、杏林翠玄真人、道光紫賢真人、泥丸翠虛真人、瓊管紫清真人，五祖蒇道天尊。",
     "desc": "【全真南宗】南五祖總誥異本。"
   },
   {
@@ -1146,20 +1144,21 @@
     "baogao": "黃芽得道，白雪成真。配水火於一炁之中，運陰陽於三華之頂。無無虛寂，渺渺凝玄。胎息刀圭，孰悟本来之體；嬰兒姹女，誰知靈府之台。度眾生於欲海之波，錫蕊珠於雲霄之表。洪願不窮，好生常念。大悲大願，大聖大慈。東華洞天帝主，鍾離妙道真人，超登蓮花天尊。\n\n西周學道，晉士成真。常住世以無為，好煉神而出定。太上之授受居多，宛邱之磋磨不少。無滯著相，慧解偏深；質外尋求，高超塵劫。金剛不壞之身，飄渺清虛之體。異相金仙，傳玄道祖。大悲大願，大聖大慈。西華洞天教主，超登蓮花天尊。\n\n鶴發童顏叟，長生不老仙。恆州寄跡，往來汾晉之間；秦政亂平，養息嵩華之穴。坐騎之變幻偏奇，齒落之重生更異。太宗高宗，徒切白駒之慕；百歲千歲，疇知年數之長。佯卒於妒女廟前，欺武實所以拒偽；樂素於集賢院內，談道總有以開君。號錫明延，冠沖斗酒。大悲大願，大聖大慈。中條洞天帝主，通玄應變天尊。\n\n玉清內相，金闕選仙。化身為三教之師，掌法判五雷之令。黃粱夢覺，忘世上之功名；寶劍光騰，掃人間之妖怪。四生六道，有感必孚；三界十方，無求不應。",
     "desc": "【八仙合誥】八仙諸位真人尊神合集寶誥。"
   }
-]
-        ];
-    // --- 程式邏輯區 ---
+];
 
     const grid = document.getElementById('deityGrid');
     const searchInput = document.getElementById('searchInput');
     const modal = document.getElementById('deityModal');
-    const closeBtn = document.getElementsByClassName("close")[0];
+    const modalTitle = document.getElementById('modalTitle');
     const modalImage = document.getElementById('modalImage');
+    const modalBaogao = document.getElementById('modalBaogao');
+    const modalDesc = document.getElementById('modalDesc');
+    const closeBtn = document.querySelector('.close');
 
-    // 渲染卡片函數
+    // 渲染神仙卡片
     function renderCards(data) {
-        grid.innerHTML = ''; // 清空現有內容
-        if (data.length === 0) {
+        grid.innerHTML = '';
+        if (!data || data.length === 0) {
             grid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; font-size: 1.2rem; color: #888;">找不到符合條件的神仙。</p>';
             return;
         }
@@ -1167,8 +1166,7 @@
         data.forEach(item => {
             const card = document.createElement('div');
             card.className = 'card';
-            
-            const imageUrl = item.image || FALLBACK_IMAGE;
+            const imageUrl = item.image && item.image.trim() !== '' ? item.image : FALLBACK_IMAGE;
 
             card.innerHTML = `
                 <div class="img-container">
@@ -1176,17 +1174,14 @@
                 </div>
                 <h3>${item.name}</h3>
             `;
-            
-            // 為卡片中的圖片添加錯誤處理
+
             const img = card.querySelector('img');
             img.onerror = function() {
-                this.onerror = null; // 防止無限循環
+                this.onerror = null;
                 this.src = FALLBACK_IMAGE;
-                this.classList.add('error-fallback'); // 添加一個類別以便設定特定樣式
-                this.alt = "暫無圖片";
+                this.classList.add('error-fallback');
             };
 
-            // 點擊事件
             card.addEventListener('click', () => openModal(item));
             grid.appendChild(card);
         });
@@ -1194,60 +1189,51 @@
 
     // 開啟彈出視窗
     function openModal(item) {
-        document.getElementById('modalTitle').innerText = item.name;
-        // 處理寶誥的換行，將 \n 轉換為 <br>
-        document.getElementById('modalBaogao').innerHTML = (item.baogao || "暫無寶誥紀錄").replace(/\n/g, '<br>');
-        document.getElementById('modalDesc').innerHTML = item.desc || "暫無詳細介紹";
-        
-        // 處理彈出視窗的圖片
-        modalImage.src = item.image || FALLBACK_IMAGE;
-        // 同樣為彈出視窗的圖片添加錯誤處理
+        modalTitle.innerText = item.name;
+        modalBaogao.innerHTML = (item.baogao || "暫無寶誥紀錄").replace(/\n/g, '<br>');
+        modalDesc.innerHTML = item.desc || "暫無詳細介紹";
+
+        modalImage.src = item.image && item.image.trim() !== '' ? item.image : FALLBACK_IMAGE;
         modalImage.onerror = function() {
-             this.onerror = null;
-             this.src = FALLBACK_IMAGE;
+            this.onerror = null;
+            this.src = FALLBACK_IMAGE;
         };
 
         modal.style.display = "block";
-        // 禁止背景滾動
         document.body.style.overflow = 'hidden';
     }
 
     // 關閉彈出視窗
     function closeModal() {
         modal.style.display = "none";
-        // 恢復背景滾動
         document.body.style.overflow = 'auto';
     }
 
     closeBtn.onclick = closeModal;
-    
-    // 點擊視窗外部也可關閉
+
     window.onclick = function(event) {
-        if (event.target == modal) {
+        if (event.target === modal) {
             closeModal();
         }
-    }
+    };
 
-    // 搜尋過濾功能 (支援多關鍵字，用空格分開)
+    // 搜尋功能
     searchInput.addEventListener('input', (e) => {
         const searchTerms = e.target.value.toLowerCase().split(' ').filter(term => term.length > 0);
-        
         let filteredData = deities;
-        
+
         if (searchTerms.length > 0) {
             filteredData = deities.filter(item => {
                 const contentToSearch = (item.name + item.desc + item.baogao).toLowerCase();
-                // 檢查是否所有關鍵字都存在於內容中
                 return searchTerms.every(term => contentToSearch.includes(term));
             });
         }
-        
+
         renderCards(filteredData);
     });
 
-    // 初始化渲染
+    // 初始化渲染所有 138 位神仙
     renderCards(deities);
-
 </script>
 
 </body>
